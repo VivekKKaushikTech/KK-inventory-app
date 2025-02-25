@@ -10,9 +10,9 @@ const Attendance = () => {
 
   // 📌 Mock Data: Pre-assigned Shift Time & Location
   const userShiftData = {
-    "8860652067": { shiftStart: "09:00", lat: 28.423, lng: 77.031 }, // Delhi
+    "8860652067": { shiftStart: "01:00", lat: 28.422537, lng: 77.032680 }, // Gurgaon
     "9650505555": { shiftStart: "10:00", lat: 19.0760, lng: 72.8777 }, // Mumbai
-    "9650514444": { shiftStart: "20:30", lat: 12.9716, lng: 77.5946 }, // Bangalore
+    "9650514444": { shiftStart: "01:00", lat: 28.423, lng: 77.031 }, // Gurgaon
   };
 
   const assignedShift = userMobile ? userShiftData[userMobile] : null;

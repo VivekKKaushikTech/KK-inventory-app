@@ -65,8 +65,22 @@ const AttendanceConfirmation = () => {
         <button 
           className="mt-6 bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600"
           onClick={() => {
-            console.log("✅ Navigating to QR Code Scan Page with userName:", employeeName);
-            navigate("/qr-code-scan", { state: { userName: employeeName, lat: userLat,lng: userLng,}});
+            console.log("✅ Navigating to QR Code Scan with:", {
+              userName: employeeName,
+              lat: userLat,
+              lng: userLng,
+              employeeID: employeeID,
+              designation: designation,
+              photo: employeePhoto
+            });
+            navigate("/qr-code-scan", { state: {
+              userName: employeeName, 
+              lat: userLat, 
+              lng: userLng,
+              employeeID: employeeID,
+              designation: designation,
+              photo: employeePhoto
+            }});
           }}
         >
           Start Your Shift

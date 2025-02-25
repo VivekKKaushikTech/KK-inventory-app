@@ -11,6 +11,14 @@ const ShiftHandover = () => {
   const userLng = location.state?.lng ?? "Unknown";
   
   console.log("📌 Debug: Received Location →", userLat, userLng);
+  console.log("📌 Debug: Sending Data to Dashboard →", {
+    employeeName: location.state?.userName,
+    employeeID: location.state?.employeeID,
+    designation: location.state?.designation,
+    lat: location.state?.lat,
+    lng: location.state?.lng,
+    employeePhoto: location.state?.photo
+  });
   
   const currentDateTime = new Date().toLocaleString();
 
@@ -153,11 +161,31 @@ const ShiftHandover = () => {
             className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 mt-6"
             onClick={() => {
                 console.log("✅ Shift Handover Submitted! Navigating to Dashboard...");
-                navigate("/dashboard");
+        
+                const userData = {
+                  employeeName: location.state?.userName || "Unknown User",
+                  employeeID: location.state?.employeeID || "123456",
+                  designation: location.state?.designation || "Operator",
+                  lat: location.state?.lat || "Unknown",   
+                  lng: location.state?.lng || "Unknown",   
+                  employeePhoto: location.state?.photo || "/assets/default-user.png"
+                };
+        
+                // ✅ Save to Local Storage BEFORE navigating
+                localStorage.removeItem("dashboardUserData");
+                navigate("/dashboard", { state: userData, replace: true });
+        
+                // ✅ Navigate with state ONCE
+                setTimeout(() => {
+                  navigate("/dashboard", { state: userData, replace: true });
+                }, 50); // ✅ Short delay ensures smooth state transition
+                               
+                
             }}
-            >
+        >
             Submit
-            </button>
+        </button>
+        
 
 
       {/* Footer */}
