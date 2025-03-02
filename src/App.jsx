@@ -18,6 +18,9 @@ import LiveMonitoring from "./pages/LiveMonitoring";
 import Transactions from "./pages/Transactions";
 import UserManagement from "./pages/UserManagement";
 
+import VehicleInspection from "./pages/VehicleInspection"; // ✅ Ensure correct path
+
+
 const Login = () => {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
@@ -130,15 +133,23 @@ const App = () => {
       <Route path="/qr-code-scan" element={<QRCodeScan />} />
       <Route path="/shift-handover" element={<ShiftHandover />} />
 
-      {/* ✅ Dashboard Layout with Sidebar */}
-      <Route path="/dashboard/*" element={<DashboardLayout />}>
-        <Route index element={<Dashboard />} /> {/* ✅ Default Dashboard Page */}
+     {/* ✅ Dashboard Layout with Sidebar */}
+          <Route path="/dashboard/*" element={<DashboardLayout />}>
+        <Route index element={<Dashboard />} /> 
+
+        {/* ✅ Keep Weighment as a separate page */}
         <Route path="weighment" element={<Weighment />} />
+
+        {/* ✅ Define Vehicle Inspection as a separate page */}
+        <Route path="weighment/vehicle-inspection" element={<VehicleInspection />} />
+
         <Route path="reports" element={<Reports />} />
         <Route path="live-monitoring" element={<LiveMonitoring />} />
         <Route path="transactions" element={<Transactions />} />
         <Route path="user-management" element={<UserManagement />} />
       </Route>
+
+
     </Routes>
   );
 };

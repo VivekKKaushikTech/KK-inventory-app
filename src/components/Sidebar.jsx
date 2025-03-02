@@ -50,24 +50,35 @@ const Sidebar = () => {
               { name: "Live Monitoring", path: "/dashboard/live-monitoring", icon: <FaCamera /> },
               { name: "Transactions", path: "/dashboard/transactions", icon: <FaCog /> },
               { name: "User Management", path: "/dashboard/user-management", icon: <FaUsers /> },
-            ].map((item) => (
-              <li key={item.name}>
-                <Link 
-                  to={item.path} 
-                  className={`relative flex items-center space-x-3 p-3 w-full transition-all duration-300
-                    ${location.pathname === item.path 
-                      ? "bg-white text-orange-500 pl-6 pr-20 rounded-l-[40px] rounded-r-[-40px] w-[calc(100%+25px)] -mr-5"
-                      : "hover:bg-orange-600 text-white"
-                    }`}
-                  onClick={() => setIsOpen(false)} // ✅ Close sidebar when a menu is clicked
-                >
-                  <span className={location.pathname === item.path ? "text-orange-500" : "text-white"}>
-                    {item.icon}
-                  </span>
-                  <span>{item.name}</span>
-                </Link>
-              </li>
-            ))}
+            ].map((item) => {
+              // Handle Dashboard separately (exact match)
+              const isDashboard = item.path === "/dashboard" && location.pathname === "/dashboard";
+          
+              // Highlight Weighment for all its subpages
+              const isWeighment = item.path === "/dashboard/weighment" && location.pathname.startsWith("/dashboard/weighment");
+          
+              // Generic check for other items
+              const isActive = isDashboard || isWeighment || location.pathname === item.path;
+          
+              return (
+                <li key={item.name}>
+                  <Link 
+                    to={item.path} 
+                    className={`relative flex items-center space-x-3 p-3 w-full transition-all duration-300
+                      ${isActive 
+                        ? "bg-white text-orange-500 pl-6 pr-20 rounded-l-[40px] rounded-r-[-40px] w-[calc(100%+25px)] -mr-5"
+                        : "hover:bg-orange-600 text-white"
+                      }`}
+                    onClick={() => setIsOpen(false)} // ✅ Close sidebar when a menu is clicked
+                  >
+                    <span className={isActive ? "text-orange-500" : "text-white"}>
+                      {item.icon}
+                    </span>
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
