@@ -88,6 +88,7 @@ const BasicInfo = ({ setValidateFunction }) => {
             value={basicInfo.vehicleType}
             onChange={(e) => handleInputChange('vehicleType', e.target.value)}>
             <option value=''>Select Vehicle Type</option>
+            <option value='Canter'>Canter</option>
             <option value='Three-wheeler Freight'>Three-wheeler Freight</option>
             <option value='Light Commercial vehicle 2-axle'>
               Light Commercial vehicle 2-axle
@@ -96,6 +97,7 @@ const BasicInfo = ({ setValidateFunction }) => {
               Light Commercial vehicle 3-axle
             </option>
             <option value='RMC Truck'>RMC Truck</option>
+            <option value='Tralla'>Tralla</option>
             <option value='Truck 2 - axle'>Truck 2 - axle</option>
             <option value='Truck 3 - axle'>Truck 3 - axle</option>
             <option value='Truck 4 - axle'>Truck 4 - axle</option>
