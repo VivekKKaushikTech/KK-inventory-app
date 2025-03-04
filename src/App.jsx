@@ -35,7 +35,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const userData = {
-    8860652067: 'Vivek',
+    8860652067: 'Weigh रक्षक',
     9650505555: 'Mohit',
     9650514444: 'Vishisht',
   };
