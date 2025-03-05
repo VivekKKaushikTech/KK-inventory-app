@@ -15,6 +15,70 @@ const VehicleWeighing = () => {
     console.log('Save action triggered!');
   };
 
+  const handleShare = async () => {
+    const input = document.getElementById('pdf-content'); // Capture the content for PDF
+
+    if (!input) {
+      console.error('❌ PDF Content not found');
+      return;
+    }
+
+    try {
+      // ✅ Hide Elements Not Needed in PDF
+      const elementsToHide = document.querySelectorAll('.exclude-from-pdf');
+      elementsToHide.forEach((el) => (el.style.display = 'none'));
+
+      // ✅ Convert HTML to Canvas
+      const canvas = await html2canvas(input, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      // ✅ Add Title to PDF
+      pdf.setFontSize(20);
+      pdf.setTextColor(234, 88, 12); // Orange-500 in Tailwind
+      pdf.setFont('helvetica', 'bold'); // Sans-serif font with bold style
+      pdf.text('Weighing Receipt', pdf.internal.pageSize.width / 2, 15, {
+        align: 'center',
+      });
+
+      // ✅ Add Image to PDF
+      pdf.addImage(imgData, 'PNG', 10, 25, 190, 0);
+
+      // ✅ Restore Hidden Elements
+      elementsToHide.forEach((el) => (el.style.display = ''));
+
+      // ✅ Convert PDF to Blob
+      const pdfBlob = pdf.output('blob');
+      const pdfFile = new File([pdfBlob], 'Weighing_Receipt.pdf', {
+        type: 'application/pdf',
+      });
+
+      // ✅ Check if Web Share API supports file sharing
+      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        await navigator.share({
+          title: 'Weighing Receipt',
+          text: 'Sharing the Weighing Receipt PDF',
+          files: [pdfFile],
+        });
+      } else {
+        // ✅ Provide a Download Link if Sharing Fails
+        const pdfURL = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = pdfURL;
+        a.download = 'Weighing_Receipt.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        alert(
+          'Sharing is not supported on this device. The PDF has been downloaded.'
+        );
+      }
+    } catch (error) {
+      console.error('❌ Error generating PDF:', error);
+      alert('Failed to generate and share the PDF.');
+    }
+  };
+
   const handlePrintPDF = async () => {
     const input = document.getElementById('pdf-content'); // Capture only main content
 
@@ -58,10 +122,6 @@ const VehicleWeighing = () => {
         window.open(pdf.output('bloburl'), '_blank'); // Open the PDF in a new tab for printing
       }, 500);
     });
-  };
-
-  const handleShare = () => {
-    alert('Share action triggered! Implement share logic here.');
   };
 
   // Weight Capture Section State
@@ -220,167 +280,145 @@ const VehicleWeighing = () => {
         </div>
 
         {/* ✅ Collapsible Weighing Info Section */}
+        {/* ✅ Always Visible Weighing Info Section */}
         <div className='mt-6 bg-white p-5 rounded-xl shadow-md border border-gray-200'>
-          <div
-            className='flex justify-between items-center cursor-pointer'
-            onClick={() => setIsWeighingInfoExpanded(!isWeighingInfoExpanded)}>
-            <h2 className='text-xl font-semibold text-orange-600'>
-              Weighing Info
-            </h2>
-            <button className='text-orange-600 transition-transform duration-300'>
-              {isWeighingInfoExpanded ? (
-                <FaMinus size={18} />
-              ) : (
-                <FaPlus size={18} />
-              )}
-            </button>
-          </div>
+          <h2 className='text-xl font-semibold text-orange-600'>
+            Weighing Info
+          </h2>
 
-          {/* ✅ Show Data When Expanded */}
-          {isWeighingInfoExpanded && (
-            <div className='mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {/* Material Dropdown */}
-              <div className='flex flex-col relative'>
-                <label className='text-gray-600 font-medium mb-1'>
-                  Material
-                </label>
-                <div className='flex items-center gap-2'>
-                  <select
-                    className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
-                    value={weighingInfo.material}
-                    onChange={(e) =>
-                      setWeighingInfo({
-                        ...weighingInfo,
-                        material: e.target.value,
-                      })
-                    }>
-                    <option value=''>Select Material</option>
-                    {materials.map((mat, index) => (
-                      <option
-                        key={index}
-                        value={mat}>
-                        {mat}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => {
-                      setModalType('Material');
-                      setIsModalOpen(true);
-                    }}
-                    className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
-                    <FaPlus size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Transporter Dropdown */}
-              <div className='flex flex-col relative'>
-                <label className='text-gray-600 font-medium mb-1'>
-                  Transporter
-                </label>
-                <div className='flex items-center gap-2'>
-                  <select
-                    className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
-                    value={weighingInfo.transporter}
-                    onChange={(e) =>
-                      setWeighingInfo({
-                        ...weighingInfo,
-                        transporter: e.target.value,
-                      })
-                    }>
-                    <option value=''>Select Transporter</option>
-                    {transporters.map((trans, index) => (
-                      <option
-                        key={index}
-                        value={trans}>
-                        {trans}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => {
-                      setModalType('Transporter');
-                      setIsModalOpen(true);
-                    }}
-                    className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
-                    <FaPlus size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Party Dropdown */}
-              <div className='flex flex-col relative'>
-                <label className='text-gray-600 font-medium mb-1'>Party</label>
-                <div className='flex items-center gap-2'>
-                  <select
-                    className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
-                    value={weighingInfo.party}
-                    onChange={(e) =>
-                      setWeighingInfo({
-                        ...weighingInfo,
-                        party: e.target.value,
-                      })
-                    }>
-                    <option value=''>Select Party</option>
-                    {parties.map((party, index) => (
-                      <option
-                        key={index}
-                        value={party}>
-                        {party}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => {
-                      setModalType('Party');
-                      setIsModalOpen(true);
-                    }}
-                    className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
-                    <FaPlus size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Invoice/Challan No. */}
-              <div className='flex flex-col'>
-                <label className='text-gray-600 font-medium mb-1'>
-                  Inv. / Challan No.
-                </label>
-                <input
-                  type='text'
-                  placeholder='Enter Invoice/Challan No.'
-                  className='w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 outline-none'
-                  value={weighingInfo.invoiceChallanNo}
+          {/* ✅ Display this content always */}
+          <div className='mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {/* Material Dropdown */}
+            <div className='flex flex-col relative'>
+              <label className='text-gray-600 font-medium mb-1'>Material</label>
+              <div className='flex items-center gap-2'>
+                <select
+                  className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
+                  value={weighingInfo.material}
                   onChange={(e) =>
                     setWeighingInfo({
                       ...weighingInfo,
-                      invoiceChallanNo: e.target.value,
+                      material: e.target.value,
                     })
-                  }
-                />
-              </div>
-
-              {/* Remarks Field */}
-              <div className='flex flex-col'>
-                <label className='text-gray-600 font-medium mb-1'>
-                  Remarks
-                </label>
-                <input
-                  type='text'
-                  placeholder='Enter remarks...'
-                  className='w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 outline-none'
-                  value={weighingInfo.remarks}
-                  onChange={(e) =>
-                    setWeighingInfo({
-                      ...weighingInfo,
-                      remarks: e.target.value,
-                    })
-                  }
-                />
+                  }>
+                  <option value=''>Select Material</option>
+                  {materials.map((mat, index) => (
+                    <option
+                      key={index}
+                      value={mat}>
+                      {mat}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => {
+                    setModalType('Material');
+                    setIsModalOpen(true);
+                  }}
+                  className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
+                  <FaPlus size={16} />
+                </button>
               </div>
             </div>
-          )}
+
+            {/* Transporter Dropdown */}
+            <div className='flex flex-col relative'>
+              <label className='text-gray-600 font-medium mb-1'>
+                Transporter
+              </label>
+              <div className='flex items-center gap-2'>
+                <select
+                  className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
+                  value={weighingInfo.transporter}
+                  onChange={(e) =>
+                    setWeighingInfo({
+                      ...weighingInfo,
+                      transporter: e.target.value,
+                    })
+                  }>
+                  <option value=''>Select Transporter</option>
+                  {transporters.map((trans, index) => (
+                    <option
+                      key={index}
+                      value={trans}>
+                      {trans}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => {
+                    setModalType('Transporter');
+                    setIsModalOpen(true);
+                  }}
+                  className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
+                  <FaPlus size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Party Dropdown */}
+            <div className='flex flex-col relative'>
+              <label className='text-gray-600 font-medium mb-1'>Party</label>
+              <div className='flex items-center gap-2'>
+                <select
+                  className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
+                  value={weighingInfo.party}
+                  onChange={(e) =>
+                    setWeighingInfo({ ...weighingInfo, party: e.target.value })
+                  }>
+                  <option value=''>Select Party</option>
+                  {parties.map((party, index) => (
+                    <option
+                      key={index}
+                      value={party}>
+                      {party}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => {
+                    setModalType('Party');
+                    setIsModalOpen(true);
+                  }}
+                  className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
+                  <FaPlus size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Invoice/Challan No. */}
+            <div className='flex flex-col'>
+              <label className='text-gray-600 font-medium mb-1'>
+                Inv. / Challan No.
+              </label>
+              <input
+                type='text'
+                placeholder='Enter Invoice/Challan No.'
+                className='w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 outline-none'
+                value={weighingInfo.invoiceChallanNo}
+                onChange={(e) =>
+                  setWeighingInfo({
+                    ...weighingInfo,
+                    invoiceChallanNo: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            {/* Remarks Field */}
+            <div className='flex flex-col'>
+              <label className='text-gray-600 font-medium mb-1'>Remarks</label>
+              <input
+                type='text'
+                placeholder='Enter remarks...'
+                className='w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 outline-none'
+                value={weighingInfo.remarks}
+                onChange={(e) =>
+                  setWeighingInfo({ ...weighingInfo, remarks: e.target.value })
+                }
+              />
+            </div>
+          </div>
         </div>
 
         {isModalOpen && (

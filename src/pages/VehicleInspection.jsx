@@ -799,39 +799,6 @@ const VehicleInspection = () => {
 
           {/* OTP Row - Client & Manager */}
           <div className='flex flex-wrap items-center gap-6 exclude-from-pdf'>
-            {/* ✅ Client OTP Section */}
-            <div className='flex items-center gap-2 exclude-from-pdf'>
-              <span className='text-gray-700 font-medium'>Client OTP:</span>
-              <button
-                className='px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition'
-                onClick={handleGenerateClientOTP}>
-                Generate
-              </button>
-              {generatedClientOTP && (
-                <>
-                  <input
-                    type='text'
-                    className='p-2 border border-gray-300 rounded-lg w-24 text-center focus:outline-none focus:ring-2 focus:ring-blue-400'
-                    placeholder='Enter OTP'
-                    value={clientOTP}
-                    onChange={(e) => setClientOTP(e.target.value)}
-                  />
-                  <button
-                    className='px-4 py-2 text-sm font-medium bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition'
-                    onClick={verifyClientOTP}>
-                    Verify
-                  </button>
-                  {clientOTPVerified ? (
-                    <span className='text-green-500 text-lg'>✔</span>
-                  ) : clientOTP !== '' ? (
-                    <span className='text-red-500 text-lg'>✖</span>
-                  ) : (
-                    ''
-                  )}
-                </>
-              )}
-            </div>
-
             {/* ✅ Manager OTP Section */}
             <div className='flex items-center gap-2 exclude-from-pdf'>
               <span className='text-gray-700 font-medium'>Manager OTP:</span>
