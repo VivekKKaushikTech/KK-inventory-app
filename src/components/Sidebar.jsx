@@ -75,11 +75,6 @@ const Sidebar = () => {
                 icon: <FaCamera />,
               },
               {
-                name: 'Transactions',
-                path: '/dashboard/transactions',
-                icon: <FaCog />,
-              },
-              {
                 name: 'User Management',
                 path: '/dashboard/user-management',
                 icon: <FaUsers />,

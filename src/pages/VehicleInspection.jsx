@@ -861,7 +861,12 @@ const VehicleInspection = () => {
             onClick={() => {
               if (isWeighVehicleEnabled) {
                 navigate('/dashboard/weighment/vehicle-weighing', {
-                  state: { receiptNumber, basicInfo, employeeData },
+                  state: {
+                    receiptNumber,
+                    basicInfo,
+                    employeeData,
+                    vehicleInspection: checklist,
+                  },
                 });
               }
             }}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaArrowLeft, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaArrowLeft, FaPlus, FaMinus, FaCamera, FaEdit } from 'react-icons/fa';
 import Header from '../components/Header';
 import WeightButtons from '../components/WeightButtons';
 import { jsPDF } from 'jspdf';
@@ -10,6 +10,24 @@ import html2canvas from 'html2canvas';
 const VehicleWeighing = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ✅ States for Modal Handling
+  const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+
+  // ✅ Function to Open Remarks Modal
+  const openRemarksModal = (item) => {
+    setSelectedItem(item);
+    setIsRemarksModalOpen(true);
+  };
+
+  // ✅ Function to Open Photo Modal
+  const openPhotoModal = (photo) => {
+    setSelectedPhoto(photo);
+    setIsPhotoModalOpen(true);
+  };
 
   const handleSave = () => {
     console.log('Save action triggered!');
@@ -139,6 +157,24 @@ const VehicleWeighing = () => {
     '4th March 2025, 16:42:20'
   );
 
+  // ✅ Function to Capture Weight & Save it for Live Monitoring
+  const captureWeight = () => {
+    const capturedData = {
+      currentWeight,
+      firstWeight,
+      firstWeightTime,
+      secondWeight,
+      secondWeightTime,
+      netWeightTime,
+      timestamp: new Date().toISOString(), // Track last update time
+    };
+
+    // ✅ Save to Local Storage for Live Monitoring Page
+    localStorage.setItem('liveMonitoringData', JSON.stringify(capturedData));
+
+    alert('Live Weight Data Captured! Now visible on Live Monitoring Page.');
+  };
+
   // ✅ Retrieve stored employee data or fallback to localStorage
   const storedData = localStorage.getItem('dashboardUserData');
   const employeeData =
@@ -151,7 +187,7 @@ const VehicleWeighing = () => {
     'Not Generated';
 
   // ✅ Extracting Passed Data from Weighment Page
-  const { basicInfo = {} } = location.state || {};
+  const { basicInfo = {}, vehicleInspection = [] } = location.state || {};
 
   // ✅ Maintain active tab state (First Weight / Second Weight)
   const [activeTab, setActiveTab] = useState('firstWeight');
@@ -161,6 +197,13 @@ const VehicleWeighing = () => {
 
   // ✅ Maintain state for collapsible Weighing Info section
   const [isWeighingInfoExpanded, setIsWeighingInfoExpanded] = useState(false);
+  const [isVehicleInspectionExpanded, setIsVehicleInspectionExpanded] =
+    useState(false);
+
+  // ✅ Filter the items that were marked "Available" (Green) in Vehicle Inspection
+  const availableInspectionItems = vehicleInspection.filter(
+    (item) => item.available
+  );
 
   // ✅ Define Weighing Info Fields
   const [weighingInfo, setWeighingInfo] = useState({
@@ -218,14 +261,12 @@ const VehicleWeighing = () => {
           </button>
         </div>
 
-        {/* ✅ Weight Buttons (Persisting State) */}
-        <div className='mt-4'>
-          <WeightButtons
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            disableSecondWeight={false}
-          />
-        </div>
+        {/* ✅ Weight Buttons (Second Weight Disabled) */}
+        <WeightButtons
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          disableSecondWeight={true}
+        />
 
         {/* ✅ Receipt Number Field */}
         <div className='mt-4 flex items-center gap-3 bg-gray-100 p-3 rounded-lg shadow-md'>
@@ -279,7 +320,170 @@ const VehicleWeighing = () => {
           )}
         </div>
 
-        {/* ✅ Collapsible Weighing Info Section */}
+        {/* ✅ Collapsible Vehicle Inspection Summary */}
+        <div className='mt-6 bg-white p-5 rounded-xl shadow-md border border-gray-200'>
+          <div
+            className='flex justify-between items-center cursor-pointer'
+            onClick={() =>
+              setIsVehicleInspectionExpanded(!isVehicleInspectionExpanded)
+            }>
+            <h2 className='text-xl font-semibold text-orange-600'>
+              Vehicle Inspection Summary
+            </h2>
+            <button className='text-orange-600 transition-transform duration-300'>
+              {isVehicleInspectionExpanded ? (
+                <FaMinus size={18} />
+              ) : (
+                <FaPlus size={18} />
+              )}
+            </button>
+          </div>
+
+          {/* ✅ Display Table Only if Expanded */}
+          {isVehicleInspectionExpanded &&
+          availableInspectionItems.length > 0 ? (
+            <div className='overflow-x-auto mt-4'>
+              <table className='w-full border-collapse border border-gray-300'>
+                <thead>
+                  <tr className='bg-gray-100 text-gray-700 text-sm'>
+                    <th className='p-2 border'>Item Name</th>
+                    <th className='p-2 border'>Available on Truck</th>
+                    <th className='p-2 border'>Removed from Truck</th>
+
+                    <th className='p-2 border'>Photo</th>
+                    <th className='p-2 border'>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {availableInspectionItems.map((item) => (
+                    <tr
+                      key={item.id}
+                      className='border text-center'>
+                      {/* ✅ Item Name */}
+                      <td className='p-2 border'>{item.itemName}</td>
+
+                      {/* ✅ Status */}
+                      {/* ✅ Available on Truck Toggle */}
+                      <td className='p-2 border text-center'>
+                        <label className='relative inline-flex items-center cursor-pointer'>
+                          <input
+                            type='checkbox'
+                            checked={item.available}
+                            className='sr-only peer'
+                            disabled
+                          />
+                          <div
+                            className="w-11 h-6 bg-gray-300 peer-focus:ring-4 peer-focus:ring-blue-300 
+        dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 
+        peer-checked:after:translate-x-full peer-checked:after:border-white 
+        after:content-[''] after:absolute after:top-0.5 after:left-[2px] 
+        after:bg-white after:border-gray-300 after:border after:rounded-full 
+        after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                      </td>
+
+                      {/* ❌ Removed from Truck Toggle */}
+                      <td className='p-2 border text-center'>
+                        <label className='relative inline-flex items-center cursor-pointer'>
+                          <input
+                            type='checkbox'
+                            checked={item.removed}
+                            className='sr-only peer'
+                            disabled
+                          />
+                          <div
+                            className="w-11 h-6 bg-gray-300 peer-focus:ring-4 peer-focus:ring-blue-300 
+        dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 
+        peer-checked:after:translate-x-full peer-checked:after:border-white 
+        after:content-[''] after:absolute after:top-0.5 after:left-[2px] 
+        after:bg-white after:border-gray-300 after:border after:rounded-full 
+        after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                      </td>
+
+                      {/* ✅ Photo (If Exists) */}
+                      <td className='p-2 border'>
+                        {item.photo ? (
+                          <button
+                            onClick={() => openPhotoModal(item.photo)}
+                            className='text-gray-500 hover:text-gray-700'>
+                            <FaCamera size={18} />
+                          </button>
+                        ) : (
+                          <span className='text-gray-400'>—</span>
+                        )}
+                      </td>
+
+                      {/* ✅ Remarks (If Exists) */}
+                      <td className='p-2 border'>
+                        {item.remarks ? (
+                          <button
+                            onClick={() => openRemarksModal(item)}
+                            className='text-blue-500 hover:text-blue-700'>
+                            <FaEdit size={18} />
+                          </button>
+                        ) : (
+                          <span className='text-gray-400'>—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            isVehicleInspectionExpanded && (
+              <p className='text-gray-500 text-center mt-2'>
+                No items were marked as available.
+              </p>
+            )
+          )}
+        </div>
+
+        {/* ✅ Remarks Modal */}
+        {isRemarksModalOpen && selectedItem && (
+          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+            <div className='bg-white p-6 rounded-lg shadow-lg w-1/3'>
+              <h2 className='text-lg font-bold text-orange-500 mb-4'>
+                Remarks for {selectedItem.itemName}
+              </h2>
+              <p className='text-gray-700'>
+                {selectedItem.remarks || 'No remarks provided'}
+              </p>
+              <div className='mt-4 flex justify-end'>
+                <button
+                  className='bg-gray-500 text-white py-2 px-4 rounded-lg'
+                  onClick={() => setIsRemarksModalOpen(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Photo Modal */}
+        {isPhotoModalOpen && selectedPhoto && (
+          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+            <div className='bg-white p-4 rounded-lg shadow-lg w-auto max-w-lg'>
+              <h2 className='text-lg font-bold text-orange-500 mb-2'>
+                Attached Photo
+              </h2>
+              <img
+                src={selectedPhoto}
+                alt='Inspection Item'
+                className='w-full max-h-96 rounded-lg shadow-md'
+              />
+              <div className='mt-4 flex justify-end'>
+                <button
+                  className='bg-gray-500 text-white py-2 px-4 rounded-lg'
+                  onClick={() => setIsPhotoModalOpen(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ✅ Always Visible Weighing Info Section */}
         <div className='mt-6 bg-white p-5 rounded-xl shadow-md border border-gray-200'>
           <h2 className='text-xl font-semibold text-orange-600'>
