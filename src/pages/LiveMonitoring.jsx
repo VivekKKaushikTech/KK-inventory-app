@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaBell, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { Bell, ArrowLeft, ArrowRight } from 'lucide-react'; // ✅ Import Lucide Bell Icon
 
 const MAX_LOCATIONS = 10; // Define max locations
 
@@ -113,7 +114,10 @@ const LiveMonitoring = () => {
             </p>
           </div>
           <div className='flex items-center space-x-4'>
-            <FaBell className='text-orange-500 text-xl cursor-pointer' />
+            <Bell
+              size={22}
+              className='text-orange-500 text-xl cursor-pointer'
+            />
             <div className='flex items-center space-x-2'>
               <img
                 src={employeePhoto}
@@ -160,7 +164,7 @@ const LiveMonitoring = () => {
               <button
                 className='absolute left-2 bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-full'
                 onClick={goToPreviousLocation}>
-                <FaArrowLeft size={20} />
+                <ArrowLeft size={20} />
               </button>
             )}
 
@@ -200,7 +204,7 @@ const LiveMonitoring = () => {
               <button
                 className='absolute right-2 bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-full'
                 onClick={goToNextLocation}>
-                <FaArrowRight size={20} />
+                <ArrowRight size={20} />
               </button>
             )}
           </div>

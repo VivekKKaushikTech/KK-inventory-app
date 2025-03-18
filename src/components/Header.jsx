@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaBell } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import { Bell } from 'lucide-react'; // ✅ Import Lucide Icons
 
 const Header = ({ title }) => {
   const location = useLocation();
@@ -38,7 +39,10 @@ const Header = ({ title }) => {
         </p>
       </div>
       <div className='flex items-center space-x-4'>
-        <FaBell className='text-orange-500 text-xl cursor-pointer' />
+        <Bell
+          size={22}
+          className='text-orange-500 text-xl cursor-pointer'
+        />
         <div className='flex items-center space-x-2'>
           <img
             src={employeePhoto}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaCamera, FaCommentDots } from 'react-icons/fa'; // Icons for Remarks & Camera
+import { Camera, MessageSquare } from 'lucide-react';
 
 const ShiftHandover = () => {
   const location = useLocation();
@@ -230,7 +231,7 @@ const ShiftHandover = () => {
               </button>
 
               {/* Remarks Icon */}
-              <FaCommentDots
+              <MessageSquare
                 className='ml-3 text-blue-500 cursor-pointer'
                 onClick={() => {
                   const remark = prompt('Enter your remarks:');
@@ -239,7 +240,7 @@ const ShiftHandover = () => {
               />
 
               {/* Capture Image Icon */}
-              <FaCamera
+              <Camera
                 className='ml-3 text-orange-500 cursor-pointer'
                 onClick={handleCapture} // ✅ Open Camera on Click
               />
@@ -278,7 +279,7 @@ const ShiftHandover = () => {
       </button>
 
       {/* Footer */}
-      <footer className='w-full text-center py-4 text-gray-600 text-sm mt-6'>
+      <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
         © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights
         reserved.
       </footer>

@@ -12,6 +12,7 @@ import {
   FaPlus,
   FaMinus,
 } from 'react-icons/fa';
+import { Plus, Minus } from 'lucide-react'; // ✅ Import Lucide Icons
 
 const Weighment = () => {
   const navigate = useNavigate();
@@ -390,11 +391,7 @@ const Weighment = () => {
                       Basic Info
                     </h2>
                     <button className='text-orange-600 transition-transform duration-300'>
-                      {isExpanded ? (
-                        <FaMinus size={18} />
-                      ) : (
-                        <FaPlus size={18} />
-                      )}
+                      {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
                     </button>
                   </div>
 

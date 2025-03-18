@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; // ✅ Keep only this
 import { FaCamera, FaEdit, FaUpload, FaPlus, FaMinus } from 'react-icons/fa';
+import {
+  Camera,
+  Pencil,
+  UploadCloud,
+  Plus,
+  Minus,
+  ArrowLeft,
+} from 'lucide-react';
 import Header from '../components/Header';
 import WeightButtons from '../components/WeightButtons';
 import { jsPDF } from 'jspdf';
@@ -542,7 +550,7 @@ const VehicleInspection = () => {
         <button
           onClick={() => navigate('/dashboard/weighment')}
           className='flex items-center gap-2 text-gray-700 bg-gray-100 px-4 py-2 rounded-lg shadow hover:bg-gray-200 transition-all exclude-from-pdf'>
-          <FaArrowLeft className='text-gray-600' />
+          <ArrowLeft className='text-gray-600' />
           Back to Basic Info
         </button>
       </div>
@@ -577,7 +585,7 @@ const VehicleInspection = () => {
           onClick={() => setIsExpanded(!isExpanded)}>
           <h2 className='text-xl font-semibold text-orange-600'>Basic Info</h2>
           <button className='text-orange-600 transition-transform duration-300'>
-            {isExpanded ? <FaMinus size={18} /> : <FaPlus size={18} />}
+            {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
           </button>
         </div>
 
@@ -670,7 +678,7 @@ const VehicleInspection = () => {
                       className='p-2 rounded-full text-gray-600 hover:text-gray-800 hover:bg-gray-200 transition duration-200'
                       onClick={() => openCamera(item.id)} // Call function to open camera
                     >
-                      <FaCamera size={20} />
+                      <Camera size={20} />
                     </button>
                   </td>
 
@@ -679,7 +687,7 @@ const VehicleInspection = () => {
                     <button
                       className='text-gray-500 hover:text-gray-700'
                       onClick={() => openRemarksModal(item.id, item.remarks)}>
-                      <FaEdit size={20} />
+                      <Pencil size={20} />
                     </button>
                   </td>
                 </tr>
@@ -768,7 +776,7 @@ const VehicleInspection = () => {
                 <label
                   htmlFor='deviation-image-upload'
                   className='p-2 bg-gray-200 text-gray-700 rounded-lg cursor-pointer flex items-center gap-2 hover:bg-gray-300 transition'>
-                  <FaUpload /> Upload Images
+                  <UploadCloud /> Upload Images
                 </label>
               </div>
 

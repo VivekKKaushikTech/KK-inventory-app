@@ -8,6 +8,7 @@ import {
 } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FileSpreadsheet, FileText, Bell, Download } from 'lucide-react'; // ✅ Import Lucide Icons
 
 const Reports = () => {
   const [employeeData, setEmployeeData] = useState(() => {
@@ -89,7 +90,10 @@ const Reports = () => {
             </p>
           </div>
           <div className='flex items-center space-x-4'>
-            <FaBell className='text-orange-500 text-xl cursor-pointer' />
+            <Bell
+              size={22}
+              className='text-orange-500 text-xl cursor-pointer'
+            />
             <div className='flex items-center space-x-2'>
               <img
                 src={employeePhoto}
@@ -141,10 +145,10 @@ const Reports = () => {
               </div>
               <div className='flex space-x-3'>
                 <button className='bg-green-500 text-white p-2 rounded-lg shadow-md flex items-center'>
-                  <FaFileExcel className='text-lg' />
+                  <FileSpreadsheet size={22} />
                 </button>
                 <button className='bg-red-500 text-white p-2 rounded-lg shadow-md flex items-center'>
-                  <FaFilePdf className='text-lg' />
+                  <FileText size={22} />
                 </button>
               </div>
             </div>
@@ -177,7 +181,7 @@ const Reports = () => {
           </div>
 
           <button className='mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center justify-center'>
-            <FaDownload className='mr-2' /> Generate & Download Report
+            <Download className='mr-2' /> Generate & Download Report
           </button>
         </div>
       </div>

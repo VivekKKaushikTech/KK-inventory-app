@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom'; // ✅ Import useLocation
 import Sidebar from '../components/Sidebar'; // ✅ Ensuring Sidebar is included only once
 import { FaUserCircle, FaBell, FaChartPie, FaChartBar } from 'react-icons/fa';
+import { Bell, PieChart, BarChart2 } from 'lucide-react';
 
 const Dashboard = () => {
   console.log('✅ Dashboard component is rendering!');
@@ -160,7 +161,10 @@ const Dashboard = () => {
               </p>
             </div>
             <div className='flex items-center space-x-4'>
-              <FaBell className='text-orange-500 text-xl cursor-pointer' />
+              <Bell
+                size={22}
+                className='text-orange-500 text-xl cursor-pointer'
+              />
               <div className='flex items-center space-x-2'>
                 <img
                   src={employeePhoto}
@@ -181,15 +185,15 @@ const Dashboard = () => {
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6'>
             {[
               {
-                title1: 'Weighbridge Type',
+                title1: 'Weighbridge (WB) Type',
                 value1: 'Pitless since 25/02/2023',
-                title2: 'Weighbridge Capacity (In Tons)',
+                title2: 'WB Capacity (In Tons)',
                 value2: '100',
               },
               {
                 title1: 'Vehicles Weighed (MTD No.)',
                 value1: '324',
-                title2: 'Overweight Vehicles (MTD No.)',
+                title2: 'Overwt. Vehicles (MTD No.)',
                 value2: '15',
               },
               {
@@ -220,15 +224,15 @@ const Dashboard = () => {
           {/* ✅ Charts Section */}
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mt-6'>
             <div className='bg-white p-6 rounded-lg shadow-md'>
-              <FaChartPie className='text-orange-500 text-4xl mx-auto' />
+              <PieChart className='text-orange-500 text-4xl mx-auto' />
               <p className='text-center mt-2'>Pie Chart 1</p>
             </div>
             <div className='bg-white p-6 rounded-lg shadow-md'>
-              <FaChartPie className='text-orange-500 text-4xl mx-auto' />
+              <PieChart className='text-orange-500 text-4xl mx-auto' />
               <p className='text-center mt-2'>Pie Chart 2</p>
             </div>
             <div className='bg-white p-6 rounded-lg shadow-md'>
-              <FaChartBar className='text-orange-500 text-4xl mx-auto' />
+              <BarChart2 className='text-orange-500 text-4xl mx-auto' />
               <p className='text-center mt-2'>Bar Graph</p>
             </div>
           </div>

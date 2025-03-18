@@ -6,6 +6,7 @@ import {
   FaUserPlus,
   FaCheckCircle,
 } from 'react-icons/fa';
+import { Pencil, Bell, Trash2 } from 'lucide-react'; // ✅ Import Lucide Icons
 
 const UserManagement = () => {
   const [employeeData, setEmployeeData] = useState(() => {
@@ -166,7 +167,10 @@ const UserManagement = () => {
           </p>
         </div>
         <div className='flex items-center space-x-4'>
-          <FaBell className='text-orange-500 text-xl cursor-pointer' />
+          <Bell
+            size={22}
+            className='text-orange-500 text-xl cursor-pointer'
+          />
           <div className='flex items-center space-x-2'>
             <img
               src={employeePhoto}
@@ -353,12 +357,12 @@ const UserManagement = () => {
                     <button
                       onClick={() => editUser(index)}
                       className='mx-2 text-blue-500'>
-                      <FaEdit />
+                      <Pencil size={20} />
                     </button>
                     <button
                       onClick={() => confirmDeleteUser(index)}
                       className='text-red-500 px-3 py-1 rounded-lg hover:bg-red-100 transition'>
-                      <FaTrash />
+                      <Trash2 size={20} />
                     </button>
                   </div>
                 </li>

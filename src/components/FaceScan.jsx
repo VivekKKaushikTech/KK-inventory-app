@@ -134,7 +134,7 @@ const FaceScan = () => {
         </div>
       </div>
 
-      <footer className='w-full text-center py-4 bg-gray-100 text-gray-600 text-sm mt-auto'>
+      <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
         © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights
         reserved.
       </footer>

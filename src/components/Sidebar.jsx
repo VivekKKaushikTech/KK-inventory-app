@@ -12,6 +12,17 @@ import {
   FaTimes, // ✅ Import for mobile menu toggle
 } from 'react-icons/fa';
 
+import {
+  LayoutDashboard, // Dashboard
+  Truck, // Weighment
+  FileText, // Reports
+  Monitor, // Live Monitoring
+  Users, // User Management
+  LogOut, // Logout
+  Menu, // Sidebar Toggle Button
+  X, // Close Button
+} from 'lucide-react'; // ✅ Import Lucide Icons
+
 const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false); // ✅ Sidebar state
@@ -22,11 +33,7 @@ const Sidebar = () => {
       <button
         className='md:hidden fixed top-4 left-4 z-50 bg-orange-500 text-white p-2 rounded-lg shadow-lg'
         onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? (
-          <FaTimes className='text-xl' />
-        ) : (
-          <FaBars className='text-xl' />
-        )}
+        {isOpen ? <X className='text-xl' /> : <Menu className='text-xl' />}
       </button>
 
       {/* ✅ Sidebar */}
@@ -57,27 +64,27 @@ const Sidebar = () => {
               {
                 name: 'Dashboard',
                 path: '/dashboard',
-                icon: <FaTachometerAlt />,
+                icon: <LayoutDashboard size={22} />, // ✅ Lucide Dashboard Icon
               },
               {
                 name: 'Weighment',
                 path: '/dashboard/weighment',
-                icon: <FaTruck />,
+                icon: <Truck size={22} />, // ✅ Lucide Truck Icon
               },
               {
                 name: 'Reports',
                 path: '/dashboard/reports',
-                icon: <FaChartBar />,
+                icon: <FileText size={22} />, // ✅ Lucide FileText Icon
               },
               {
                 name: 'Live Monitoring',
                 path: '/dashboard/live-monitoring',
-                icon: <FaCamera />,
+                icon: <Monitor size={22} />, // ✅ Lucide Monitor Icon
               },
               {
                 name: 'User Management',
                 path: '/dashboard/user-management',
-                icon: <FaUsers />,
+                icon: <Users size={22} />, // ✅ Lucide Users Icon
               },
             ].map((item) => {
               // Handle Dashboard separately (exact match)
@@ -123,7 +130,7 @@ const Sidebar = () => {
           className='mt-auto flex items-center space-x-3 w-full p-3 rounded-lg bg-white text-orange-500 hover:bg-gray-200'
           onClick={() => setIsOpen(false)} // ✅ Close sidebar when logout is clicked (mobile)
         >
-          <FaSignOutAlt />
+          <LogOut size={22} /> {/* ✅ Modern Logout Icon */}
           <span>Logout</span>
         </button>
       </aside>
