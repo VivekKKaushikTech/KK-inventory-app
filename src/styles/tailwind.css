@@ -1,66 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-@layer components {
-  .all-\[unset\] {
-    all: unset;
-  }
-}
-
-:root {
-  --collection-1-breakpoint: 1440px;
-  --collection-1-columns: 12px;
-  --collection-1-gutter: 32px;
-  --collection-1-margin: 96px;
-  --collection-1-number: 0px;
-  --collection-1-text-font-size: 45px;
-  --collection-1-text-line-height: 55px;
-  --collection-1-text-spacing: 50px;
-}
-
-/*
-
-To enable a theme in your HTML, simply add one of the following data attributes to an HTML element, like so:
-
-<body data-collection-1-mode="desktop">
-    <!-- the rest of your content -->
-</body>
-
-You can apply the theme on any DOM node, not just the `body`
-
-*/
-
-[data-collection-1-mode="desktop"] {
-  --collection-1-breakpoint: 1440px;
-  --collection-1-columns: 12px;
-  --collection-1-gutter: 32px;
-  --collection-1-margin: 96px;
-  --collection-1-text-font-size: 45px;
-  --collection-1-text-line-height: 55px;
-  --collection-1-text-spacing: 50px;
-}
-
-[data-collection-1-mode="tablet"] {
-  --collection-1-breakpoint: 768px;
-  --collection-1-columns: 8px;
-  --collection-1-gutter: 24px;
-  --collection-1-margin: 24px;
-  --collection-1-text-font-size: 25px;
-  --collection-1-text-line-height: 40px;
-  --collection-1-text-spacing: 30px;
-}
-
-[data-collection-1-mode="mobile"] {
-  --collection-1-breakpoint: 390px;
-  --collection-1-columns: 4px;
-  --collection-1-gutter: 16px;
-  --collection-1-margin: 16px;
-  --collection-1-text-font-size: 20px;
-  --collection-1-text-line-height: 30px;
-  --collection-1-text-spacing: 15px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -98,6 +36,9 @@ You can apply the theme on any DOM node, not just the `body`
     --ring: 215 20.2% 65.1%;
 
     --radius: 0.5rem;
+
+    /* ✅ Set Inter as the Global Font */
+    font-family: 'Inter', sans-serif;
   }
 
   .dark {
@@ -132,15 +73,60 @@ You can apply the theme on any DOM node, not just the `body`
 
     --radius: 0.5rem;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-white text-black;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-white text-black font-sans; /* ✅ Uses Tailwind's 'font-sans' */
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
+}
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+
+/* ✅ Responsive Font Settings */
+:root {
+  --collection-1-breakpoint: 1440px;
+  --collection-1-columns: 12px;
+  --collection-1-gutter: 32px;
+  --collection-1-margin: 96px;
+  --collection-1-text-font-size: 45px;
+  --collection-1-text-line-height: 55px;
+  --collection-1-text-spacing: 50px;
+}
+
+[data-collection-1-mode='desktop'] {
+  --collection-1-breakpoint: 1440px;
+  --collection-1-columns: 12px;
+  --collection-1-gutter: 32px;
+  --collection-1-margin: 96px;
+  --collection-1-text-font-size: 45px;
+  --collection-1-text-line-height: 55px;
+  --collection-1-text-spacing: 50px;
+}
+
+[data-collection-1-mode='tablet'] {
+  --collection-1-breakpoint: 768px;
+  --collection-1-columns: 8px;
+  --collection-1-gutter: 24px;
+  --collection-1-margin: 24px;
+  --collection-1-text-font-size: 25px;
+  --collection-1-text-line-height: 40px;
+  --collection-1-text-spacing: 30px;
+}
+
+[data-collection-1-mode='mobile'] {
+  --collection-1-breakpoint: 390px;
+  --collection-1-columns: 4px;
+  --collection-1-gutter: 16px;
+  --collection-1-margin: 16px;
+  --collection-1-text-font-size: 20px;
+  --collection-1-text-line-height: 30px;
+  --collection-1-text-spacing: 15px;
 }

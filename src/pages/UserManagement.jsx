@@ -156,30 +156,32 @@ const UserManagement = () => {
   return (
     <div className='flex flex-col min-h-screen bg-white'>
       {/* ✅ Header Section */}
-      <header className='bg-white shadow-md p-4 flex justify-between items-center'>
+      <header className='bg-white shadow-md p-5 rounded-xl flex justify-between items-center'>
         <div>
-          <h1 className='text-xl text-orange-500 font-bold'>User Management</h1>
-          <p className='text-sm text-gray-600'>
-            Test Private Limited - 📍Location: {userLat}, {userLng}
+          <h1 className='text-xl font-semibold text-orange-500'>
+            User Management
+          </h1>
+          <p className='text-sm text-gray-500'>
+            Test Private Limited - 📍 {userLat}, {userLng}
           </p>
-          <p className='text-sm text-gray-600'>
-            Date & Time: {currentTime.toLocaleString()}
+          <p className='text-sm text-gray-500'>
+            📅 {currentTime.toLocaleString()}
           </p>
         </div>
         <div className='flex items-center space-x-4'>
           <Bell
-            size={22}
-            className='text-orange-500 text-xl cursor-pointer'
+            size={24}
+            className='text-orange-500 cursor-pointer hover:text-gray-800'
           />
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-3'>
             <img
               src={employeePhoto}
               alt='User'
-              className='w-10 h-10 rounded-full border-2 border-orange-500 object-cover'
+              className='w-12 h-12 rounded-full border border-orange-500 object-cover'
             />
             <div>
-              <p className='text-orange-500'>{employeeName}</p>
-              <p className='text-gray-600 text-sm'>
+              <p className='text-gray-800 font-medium'>{employeeName}</p>
+              <p className='text-gray-500 text-sm'>
                 {designation} - {employeeID}
               </p>
             </div>
@@ -310,86 +312,103 @@ const UserManagement = () => {
             </div>
           </div>
         )}
-        {/* ✅ User Summary Section */}
-        <div className='mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
-          {[
-            { role: 'Total Users', count: users.length, color: 'bg-blue-500' },
-            {
-              role: 'Admins',
-              count: users.filter((u) => u.role === 'Admin').length,
-              color: 'bg-red-500',
-            },
-            {
-              role: 'Managers',
-              count: users.filter((u) => u.role === 'Manager').length,
-              color: 'bg-yellow-500',
-            },
-            {
-              role: 'Operators',
-              count: users.filter((u) => u.role === 'Operator').length,
-              color: 'bg-green-500',
-            },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className={`p-4 rounded-lg shadow-md text-white ${stat.color} flex flex-col items-center`}>
-              <h3 className='text-lg font-semibold'>{stat.role}</h3>
-              <p className='text-2xl font-bold'>{stat.count}</p>
-            </div>
-          ))}
+        <div className='flex-grow p-6'>
+          {/* ✅ User Summary Section */}
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6'>
+            {[
+              {
+                label: 'Total Users',
+                count: users.length,
+                color: 'bg-blue-500',
+              },
+              {
+                label: 'Admins',
+                count: users.filter((u) => u.role === 'Admin').length,
+                color: 'bg-red-500',
+              },
+              {
+                label: 'Managers',
+                count: users.filter((u) => u.role === 'Manager').length,
+                color: 'bg-yellow-500',
+              },
+              {
+                label: 'Operators',
+                count: users.filter((u) => u.role === 'Operator').length,
+                color: 'bg-green-500',
+              },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className={`p-5 rounded-xl text-white shadow-md ${stat.color}`}>
+                <h3 className='text-lg font-semibold'>{stat.label}</h3>
+                <p className='text-2xl font-bold'>{stat.count}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* ✅ User Management Table */}
-        <div className='mt-6 bg-white p-6 rounded-lg shadow-md'>
-          <h2 className='text-xl font-semibold text-orange-500 mb-4'>
-            User List
-          </h2>
+        {/* ✅ User List */}
+        <div className='mt-6 bg-white p-6 rounded-xl shadow-md'>
+          <h2 className='text-xl font-semibold text-gray-800'>User List</h2>
           {users.length === 0 ? (
-            <p className='text-gray-500 text-center'>No users added yet.</p>
+            <p className='text-gray-500 text-center py-4'>
+              No users added yet.
+            </p>
           ) : (
-            <ul>
-              {users.map((user, index) => (
-                <li
-                  key={index}
-                  className='flex justify-between items-center border p-2 rounded-lg'>
-                  {user.name} ({user.role})
-                  <div>
-                    <button
-                      onClick={() => editUser(index)}
-                      className='mx-2 text-blue-500'>
-                      <Pencil size={20} />
-                    </button>
-                    <button
-                      onClick={() => confirmDeleteUser(index)}
-                      className='text-red-500 px-3 py-1 rounded-lg hover:bg-red-100 transition'>
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className='mt-4 overflow-x-auto'>
+              <table className='w-full min-w-max border-collapse'>
+                <thead>
+                  <tr className='bg-gray-50'>
+                    <th className='p-3 text-left text-gray-600'>Name</th>
+                    <th className='p-3 text-left text-gray-600'>Role</th>
+                    <th className='p-3 text-left text-gray-600'>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user, index) => (
+                    <tr
+                      key={index}
+                      className='border-b hover:bg-gray-100'>
+                      <td className='p-3'>{user.name}</td>
+                      <td className='p-3'>{user.role}</td>
+                      <td className='p-3 flex space-x-2'>
+                        <button
+                          onClick={() => editUser(index)}
+                          className='text-blue-500'>
+                          <Pencil size={18} />
+                        </button>
+                        <button
+                          onClick={() => setDeleteUserIndex(index)}
+                          className='text-red-500'>
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
         {/* ✅ Delete Confirmation Modal */}
         {deleteUserIndex !== null && (
           <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-            <div className='bg-white p-6 rounded-lg shadow-lg w-96 text-center'>
+            <div className='bg-white p-6 rounded-lg shadow-lg text-center w-96'>
               <h2 className='text-lg font-bold text-red-600 mb-4'>
                 Confirm Deletion
               </h2>
               <p className='text-gray-700 mb-4'>
-                Are you sure you want to delete{' '}
-                <b>{users[deleteUserIndex].name}</b>?
+                Are you sure you want to delete this user?
               </p>
               <div className='flex justify-center space-x-4'>
                 <button
                   onClick={deleteUser}
-                  className='bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition'>
+                  className='bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600'>
                   Yes, Delete
                 </button>
                 <button
                   onClick={() => setDeleteUserIndex(null)}
-                  className='bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition'>
+                  className='bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500'>
                   Cancel
                 </button>
               </div>

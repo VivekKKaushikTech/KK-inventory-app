@@ -101,32 +101,32 @@ const LiveMonitoring = () => {
   return (
     <div className='flex flex-col min-h-screen bg-white-100'>
       <div className='flex-grow p-4'>
-        <header className='bg-white shadow-md p-4 flex justify-between items-center'>
+        <header className='bg-white shadow-md p-5 rounded-xl flex justify-between items-center'>
           <div>
-            <h1 className='text-xl text-orange-500 font-bold'>
+            <h1 className='text-xl font-semibold text-orange-500'>
               Live Monitoring
             </h1>
-            <p className='text-sm text-gray-600'>
-              Test Private Limited - 📍Location: {userLat}, {userLng}
+            <p className='text-sm text-gray-500'>
+              Test Private Limited - 📍 {userLat}, {userLng}
             </p>
-            <p className='text-sm text-gray-600'>
-              Date & Time: {currentTime.toLocaleString()}
+            <p className='text-sm text-gray-500'>
+              📅 {currentTime.toLocaleString()}
             </p>
           </div>
           <div className='flex items-center space-x-4'>
             <Bell
-              size={22}
-              className='text-orange-500 text-xl cursor-pointer'
+              size={24}
+              className='text-orange-500 cursor-pointer hover:text-gray-800'
             />
-            <div className='flex items-center space-x-2'>
+            <div className='flex items-center space-x-3'>
               <img
                 src={employeePhoto}
                 alt='User'
-                className='w-10 h-10 rounded-full border-2 border-orange-500 object-cover'
+                className='w-12 h-12 rounded-full border border-orange-500 object-cover'
               />
               <div>
-                <p className='text-orange-500'>{employeeName}</p>
-                <p className='text-gray-600 text-sm'>
+                <p className='text-gray-800 font-medium'>{employeeName}</p>
+                <p className='text-gray-500 text-sm'>
                   {designation} - {employeeID}
                 </p>
               </div>
@@ -135,15 +135,15 @@ const LiveMonitoring = () => {
         </header>
 
         {/* ✅ Location Multi-Selection Panel */}
-        <div className='mt-6 bg-white p-4 rounded-lg shadow-md'>
-          <h2 className='text-lg font-semibold text-gray-700 mb-2'>
+        <div className='mt-6 bg-white p-6 rounded-xl shadow-md'>
+          <h2 className='text-lg font-semibold text-gray-800 mb-3'>
             Select Locations to Monitor
           </h2>
           <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2'>
             {locations.map((location, index) => (
               <label
                 key={index}
-                className='flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer'>
+                className='flex items-center space-x-2 bg-gray-100 p-3 rounded-lg cursor-pointer hover:bg-gray-200 transition'>
                 <input
                   type='checkbox'
                   checked={selectedLocations.includes(location)}

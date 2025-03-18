@@ -621,33 +621,33 @@ const VehicleInspection = () => {
       </div>
 
       {/* ✅ Vehicle Inspection Checklist */}
-      <div className='mt-6 bg-white p-4 rounded-lg shadow-lg'>
-        <h2 className='text-xl font-semibold text-orange-600 mb-4'>
+      <div className='mt-6 bg-white p-6 rounded-lg shadow-lg'>
+        <h2 className='text-xl font-semibold text-orange-500 mb-4'>
           Vehicle Inspection Check List
         </h2>
 
         {/* ✅ Checklist Table */}
         <div className='overflow-x-auto'>
-          <table className='w-full border-collapse border border-gray-300'>
-            <thead>
-              <tr className='bg-gray-100'>
-                <th className='p-2 border'>Item Name</th>
-                <th className='p-2 border'>Available on Truck</th>
-                <th className='p-2 border'>Removed from Truck</th>
-                <th className='p-2 border'>Capture Photo</th>
-                <th className='p-2 border'>Remarks</th>
+          <table className='w-full border border-gray-300 rounded-lg shadow-sm'>
+            <thead className='bg-gray-100 text-gray-700'>
+              <tr>
+                <th className='p-3 border text-left'>Item Name</th>
+                <th className='p-3 border text-center'>Available on Truck</th>
+                <th className='p-3 border text-center'>Removed from Truck</th>
+                <th className='p-3 border text-center'>Capture Photo</th>
+                <th className='p-3 border text-center'>Remarks</th>
               </tr>
             </thead>
             <tbody>
               {checklist.map((item) => (
                 <tr
                   key={item.id}
-                  className='border'>
+                  className='border text-gray-800 bg-white hover:bg-gray-50 transition'>
                   {/* Item Name */}
-                  <td className='p-2 border text-center'>{item.itemName}</td>
+                  <td className='p-3 border text-left'>{item.itemName}</td>
 
                   {/* Toggle: Available on Truck */}
-                  <td className='p-2 border text-center'>
+                  <td className='p-3 border text-center'>
                     <label className='relative inline-flex items-center cursor-pointer'>
                       <input
                         type='checkbox'
@@ -655,12 +655,12 @@ const VehicleInspection = () => {
                         onChange={() => toggleField(item.id, 'available')}
                         className='sr-only peer'
                       />
-                      <div className="w-11 h-6 bg-gray-300 peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                      <div className='w-12 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer-checked:bg-green-500 peer-checked:after:translate-x-6 after:absolute after:top-0.5 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all'></div>
                     </label>
                   </td>
 
                   {/* Toggle: Removed from Truck */}
-                  <td className='p-2 border text-center'>
+                  <td className='p-3 border text-center'>
                     <label className='relative inline-flex items-center cursor-pointer'>
                       <input
                         type='checkbox'
@@ -668,26 +668,26 @@ const VehicleInspection = () => {
                         onChange={() => toggleField(item.id, 'removed')}
                         className='sr-only peer'
                       />
-                      <div className="w-11 h-6 bg-gray-300 peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                      <div className='w-12 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer-checked:bg-red-500 peer-checked:after:translate-x-6 after:absolute after:top-0.5 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all'></div>
                     </label>
                   </td>
 
                   {/* Capture Photo Button */}
-                  <td className='p-2 border text-center'>
+                  <td className='p-3 border text-center'>
                     <button
-                      className='p-2 rounded-full text-gray-600 hover:text-gray-800 hover:bg-gray-200 transition duration-200'
+                      className='p-2 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-200 transition'
                       onClick={() => openCamera(item.id)} // Call function to open camera
                     >
-                      <Camera size={20} />
+                      <Camera size={22} />
                     </button>
                   </td>
 
                   {/* Remarks Icon Button */}
-                  <td className='p-2 border text-center'>
+                  <td className='p-3 border text-center'>
                     <button
-                      className='text-gray-500 hover:text-gray-700'
+                      className='text-gray-500 hover:text-gray-800 transition'
                       onClick={() => openRemarksModal(item.id, item.remarks)}>
-                      <Pencil size={20} />
+                      <Pencil size={22} />
                     </button>
                   </td>
                 </tr>
@@ -700,23 +700,24 @@ const VehicleInspection = () => {
       {/* ✅ Remarks Modal */}
       {modalOpen && (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='bg-white p-6 rounded-lg shadow-lg w-1/3'>
-            <h2 className='text-lg font-bold text-orange-500 mb-4'>
+          <div className='bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3'>
+            <h2 className='text-lg font-bold text-gray-800 mb-4'>
               Enter Remarks
             </h2>
             <textarea
-              className='w-full p-2 border rounded-lg'
+              className='w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none'
               value={currentRemark}
               onChange={(e) => setCurrentRemark(e.target.value)}
+              placeholder='Type your remarks here...'
             />
-            <div className='mt-4 flex justify-end gap-2'>
+            <div className='mt-4 flex justify-end gap-3'>
               <button
-                className='bg-gray-500 text-white py-2 px-4 rounded-lg'
+                className='bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500 transition'
                 onClick={() => setModalOpen(false)}>
                 Cancel
               </button>
               <button
-                className='bg-green-500 text-white py-2 px-4 rounded-lg'
+                className='bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition'
                 onClick={saveRemarks}>
                 Save
               </button>

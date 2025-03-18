@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ✅ Global Styles */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -13,6 +16,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ✅ Typography & Layout */
 a {
   font-weight: 500;
   color: #646cff;
@@ -28,6 +32,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: 'Inter', sans-serif; /* ✅ Ensuring Inter is applied globally */
 }
 
 h1 {
@@ -35,6 +40,7 @@ h1 {
   line-height: 1.1;
 }
 
+/* ✅ Buttons */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -54,6 +60,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* ✅ Light Mode Adjustments */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
