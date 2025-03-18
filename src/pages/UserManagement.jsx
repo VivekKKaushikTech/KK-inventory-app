@@ -349,7 +349,7 @@ const UserManagement = () => {
 
         {/* ✅ User List */}
         <div className='mt-6 bg-white p-6 rounded-xl shadow-md'>
-          <h2 className='text-xl font-semibold text-gray-800'>User List</h2>
+          <h2 className='text-xl font-semibold text-orange-500'>User List</h2>
           {users.length === 0 ? (
             <p className='text-gray-500 text-center py-4'>
               No users added yet.

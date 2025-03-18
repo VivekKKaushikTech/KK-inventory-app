@@ -10,7 +10,9 @@ const Attendance = () => {
 
   // 📌 Mock Data: Pre-assigned Shift Time & Location
   const userShiftData = {
-    8860652067: { shiftStart: '01:00', lat: 28.422537, lng: 77.03268 }, // Gurgaon
+    8860652067: { shiftStart: '01:00', lat: 28.4238432, lng: 77.0474929 }, // Gurgaon
+    //lat: 28.422537, lng: 77.03268 }, // Gurgaon
+    // lat: 28.4238432, lng: 77.0474929 }, // RAG
     9650505555: { shiftStart: '10:00', lat: 19.076, lng: 72.8777 }, // Mumbai
     9650514444: { shiftStart: '01:00', lat: 28.423, lng: 77.031 }, // Gurgaon
   };
