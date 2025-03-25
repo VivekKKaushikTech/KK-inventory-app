@@ -73,3 +73,18 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

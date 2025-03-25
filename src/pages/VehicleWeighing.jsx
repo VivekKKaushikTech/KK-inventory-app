@@ -1,22 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaArrowLeft, FaPlus, FaMinus, FaCamera, FaEdit } from 'react-icons/fa';
-import { ArrowLeft, Plus, Minus, Camera, Pencil } from 'lucide-react';
+import {
+  ArrowLeft,
+  Plus,
+  Minus,
+  Camera,
+  Pencil,
+  Mail,
+  MessageSquare,
+} from 'lucide-react';
 import Header from '../components/Header';
 import WeightButtons from '../components/WeightButtons';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
+import materialList from '../components/materialList';
+
+const handleSmallPrint = () => {
+  window.print();
+};
 
 const VehicleWeighing = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ✅ Declaration for Select Material
+  const [showDeclarationModal, setShowDeclarationModal] = useState(false);
+  const [declarationUploaded, setDeclarationUploaded] = useState(false);
+  const [declarationPhoto, setDeclarationPhoto] = useState(null);
+
+  const mandatoryDeclarationMaterials = [
+    'TMT 8MM',
+    'TMT 12MM',
+    'TMT 16MM',
+    'TMT 20MM',
+    'TMT 25MM',
+    'TMT 32MM',
+    'FLYASH',
+    'CEMENT BAGS',
+    'SCRAP TMT',
+    'SCRAP ALUMINIUM',
+    'SCRAP MS',
+    'SCRAP WOODEN',
+    'ALUMINIUM SHUTTERING/FORMWORK',
+    'PLY SHUTTERING',
+    'AGGREGATE 10MM (RODI)',
+    'AGGREGATE 20MM (RODI)',
+    'COARSE DUST',
+    'FINE DUST',
+    'MS ACCESSORIES',
+    'MS STRUCTURE',
+  ];
+
+  // ✅ Define Weighing Info Fields
+  const [weighingInfo, setWeighingInfo] = useState({
+    material: '',
+    transporter: '',
+    seller: '',
+    buyer: '',
+    invoiceChallanNo: '',
+    remarks: '',
+  });
+
+  const isDeclarationRequired = mandatoryDeclarationMaterials.includes(
+    weighingInfo.material
+  );
 
   // ✅ States for Modal Handling
   const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+
+  // ✅ For Parchi Print (Small Size)
+  const handleSmallPrint = () => {
+    const printable = document.getElementById('printable-receipt');
+
+    if (!printable) {
+      console.error('❌ Printable element not found');
+      return;
+    }
+
+    console.log('🖨️ Showing printable receipt on screen...');
+    printable.style.display = 'block';
+
+    requestAnimationFrame(() => {
+      console.log('✅ requestAnimationFrame triggered');
+
+      setTimeout(() => {
+        console.log('🕒 500ms delay complete. Triggering print...');
+        window.print();
+
+        // Post-print hide
+        setTimeout(() => {
+          console.log('👋 Hiding printable receipt after print');
+          printable.style.display = 'none';
+        }, 500);
+      }, 500); // You can increase this to 1000ms if print dialog is still blank
+    });
+  };
 
   // ✅ Function to Open Remarks Modal
   const openRemarksModal = (item) => {
@@ -33,70 +116,52 @@ const VehicleWeighing = () => {
   const handleSave = () => {
     console.log('Save action triggered!');
   };
+  const [generatedPDFUrl, setGeneratedPDFUrl] = useState('');
 
   const handleShare = async () => {
-    const input = document.getElementById('pdf-content'); // Capture the content for PDF
-
-    if (!input) {
-      console.error('❌ PDF Content not found');
-      return;
-    }
+    const input = document.getElementById('pdf-content');
+    if (!input) return;
 
     try {
-      // ✅ Hide Elements Not Needed in PDF
       const elementsToHide = document.querySelectorAll('.exclude-from-pdf');
       elementsToHide.forEach((el) => (el.style.display = 'none'));
 
-      // ✅ Convert HTML to Canvas
       const canvas = await html2canvas(input, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-
-      // ✅ Add Title to PDF
       pdf.setFontSize(20);
-      pdf.setTextColor(234, 88, 12); // Orange-500 in Tailwind
-      pdf.setFont('helvetica', 'bold'); // Sans-serif font with bold style
+      pdf.setTextColor(234, 88, 12);
+      pdf.setFont('helvetica', 'bold');
       pdf.text('Weighing Receipt', pdf.internal.pageSize.width / 2, 15, {
         align: 'center',
       });
-
-      // ✅ Add Image to PDF
       pdf.addImage(imgData, 'PNG', 10, 25, 190, 0);
 
-      // ✅ Restore Hidden Elements
       elementsToHide.forEach((el) => (el.style.display = ''));
 
-      // ✅ Convert PDF to Blob
       const pdfBlob = pdf.output('blob');
-      const pdfFile = new File([pdfBlob], 'Weighing_Receipt.pdf', {
-        type: 'application/pdf',
-      });
+      const pdfURL = URL.createObjectURL(pdfBlob);
 
-      // ✅ Check if Web Share API supports file sharing
-      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-        await navigator.share({
-          title: 'Weighing Receipt',
-          text: 'Sharing the Weighing Receipt PDF',
-          files: [pdfFile],
-        });
-      } else {
-        // ✅ Provide a Download Link if Sharing Fails
-        const pdfURL = URL.createObjectURL(pdfBlob);
-        const a = document.createElement('a');
-        a.href = pdfURL;
-        a.download = 'Weighing_Receipt.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        alert(
-          'Sharing is not supported on this device. The PDF has been downloaded.'
-        );
-      }
+      // ✅ Set the PDF URL to state so we can share via modal buttons
+      setGeneratedPDFUrl(pdfURL);
+      setShowShareModal(true);
     } catch (error) {
       console.error('❌ Error generating PDF:', error);
       alert('Failed to generate and share the PDF.');
     }
   };
+
+  useEffect(() => {
+    const fetchRecipients = async () => {
+      // TEMP MOCK - replace this with actual API call when backend is ready
+      setShareContacts({
+        emails: ['vivek@ihiva.ai'],
+        phones: ['8860652067'],
+      });
+    };
+
+    fetchRecipients();
+  }, []);
 
   const handlePrintPDF = async () => {
     const input = document.getElementById('pdf-content'); // Capture only main content
@@ -158,6 +223,9 @@ const VehicleWeighing = () => {
     '4th March 2025, 16:42:20'
   );
 
+  const netWeight = parseFloat(firstWeight) - parseFloat(secondWeight);
+  const printDateTime = new Date().toLocaleString();
+
   // ✅ Function to Capture Weight & Save it for Live Monitoring
   const captureWeight = () => {
     const capturedData = {
@@ -206,16 +274,6 @@ const VehicleWeighing = () => {
     (item) => item.available
   );
 
-  // ✅ Define Weighing Info Fields
-  const [weighingInfo, setWeighingInfo] = useState({
-    material: '',
-    transporter: '',
-    seller: '',
-    buyer: '',
-    invoiceChallanNo: '',
-    remarks: '',
-  });
-
   // ✅ Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(''); // Tracks which dropdown is being updated
@@ -228,13 +286,22 @@ const VehicleWeighing = () => {
   });
 
   // ✅ Existing Dropdown Options (Can be loaded from API/localStorage)
-  const [materials, setMaterials] = useState(['Cement', 'Iron', 'Coal']);
+  const [materials, setMaterials] = useState(materialList);
   const [transporters, setTransporters] = useState([
     'XYZ Transport',
     'ABC Logistics',
     'PQR Movers',
   ]);
   const [parties, setParties] = useState(['Client A', 'Client B', 'Client C']);
+
+  // ✅ Parchi Sharing to Prefixed email and whats app numbers ONLY
+
+  const [shareContacts, setShareContacts] = useState({
+    emails: [],
+    phones: [],
+  });
+
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     // ✅ Redirect to "Vehicle Inspection" if data is missing
@@ -501,12 +568,16 @@ const VehicleWeighing = () => {
                 <select
                   className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
                   value={weighingInfo.material}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const selectedMat = e.target.value;
                     setWeighingInfo({
                       ...weighingInfo,
                       material: e.target.value,
-                    })
-                  }>
+                    });
+                    if (mandatoryDeclarationMaterials.includes(selectedMat)) {
+                      setShowDeclarationModal(true);
+                    }
+                  }}>
                   <option value=''>Select Material</option>
                   {materials.map((mat, index) => (
                     <option
@@ -526,6 +597,66 @@ const VehicleWeighing = () => {
                 </button>
               </div>
             </div>
+
+            {showDeclarationModal && (
+              <div className='fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex justify-center items-center'>
+                <div className='bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md border border-gray-100'>
+                  <div className='mb-4 text-center'>
+                    <h2 className='text-2xl font-semibold text-gray-800'>
+                      Upload Declaration
+                    </h2>
+                    <p className='text-sm text-gray-500 mt-1'>
+                      Declaration is required for the selected material.
+                    </p>
+                  </div>
+
+                  <div className='flex flex-col gap-4'>
+                    {/* 📸 Capture with Camera */}
+                    <label className='flex justify-center items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl shadow text-sm cursor-pointer transition'>
+                      📷 Capture Photo
+                      <input
+                        type='file'
+                        accept='image/*'
+                        capture='environment'
+                        className='hidden'
+                        onChange={(e) => {
+                          if (e.target.files[0]) {
+                            const file = e.target.files[0];
+                            setDeclarationPhoto(URL.createObjectURL(file));
+                            setDeclarationUploaded(true);
+                            setShowDeclarationModal(false);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    {/* 📄 Upload File */}
+                    <label className='flex justify-center items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl shadow text-sm cursor-pointer transition'>
+                      📄 Upload Declaration
+                      <input
+                        type='file'
+                        accept='application/pdf,image/*'
+                        className='hidden'
+                        onChange={(e) => {
+                          if (e.target.files[0]) {
+                            const file = e.target.files[0];
+                            setDeclarationPhoto(URL.createObjectURL(file));
+                            setDeclarationUploaded(true);
+                            setShowDeclarationModal(false);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={() => setShowDeclarationModal(false)}
+                    className='mt-6 text-sm text-gray-400 hover:text-gray-600 transition-all'>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Transporter Dropdown */}
             <div className='flex flex-col relative'>
@@ -837,6 +968,92 @@ const VehicleWeighing = () => {
         )}
       </div>
 
+      {showShareModal && (
+        <div className='fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50'>
+          <div className='bg-white rounded-2xl shadow-xl p-6 w-full max-w-md border border-gray-100'>
+            {/* Title */}
+            <h2 className='text-xl font-semibold text-gray-800 mb-2 text-center'>
+              Share Weighment Receipt
+            </h2>
+            <p className='text-sm text-gray-500 mb-6 text-center'>
+              Choose how you'd like to share:
+            </p>
+
+            {/* Share Buttons */}
+            <div className='space-y-3'>
+              {/* WhatsApp Share Buttons */}
+              {shareContacts.phones.map((phone, idx) => (
+                <button
+                  key={idx}
+                  onClick={async () => {
+                    const input = document.getElementById('pdf-content');
+                    const canvas = await html2canvas(input, {
+                      scale: 2,
+                      useCORS: true,
+                    });
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF();
+                    pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+                    const blob = pdf.output('blob');
+                    const url = URL.createObjectURL(blob);
+
+                    const message = `Hi, sharing the weighing receipt.`;
+                    window.open(
+                      `https://wa.me/${phone}?text=${encodeURIComponent(
+                        message + '\n' + url
+                      )}`
+                    );
+                    setShowShareModal(false);
+                  }}
+                  className='w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl shadow transition-all'>
+                  <img
+                    src='https://img.icons8.com/color/24/000000/whatsapp--v1.png'
+                    alt='WhatsApp'
+                  />
+                  WhatsApp to {phone}
+                </button>
+              ))}
+
+              {/* Email Share Buttons */}
+              {shareContacts.emails.map((email, idx) => (
+                <button
+                  key={idx}
+                  onClick={async () => {
+                    const input = document.getElementById('pdf-content');
+                    const canvas = await html2canvas(input, {
+                      scale: 2,
+                      useCORS: true,
+                    });
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF();
+                    pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+                    const blob = pdf.output('dataurlstring');
+
+                    window.location.href = `mailto:${email}?subject=Weighment Receipt&body=Please find the receipt attached:\n${blob}`;
+                    setShowShareModal(false);
+                  }}
+                  className='w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-xl shadow transition-all'>
+                  <img
+                    src='https://img.icons8.com/fluency/24/000000/new-post.png'
+                    alt='Email'
+                  />
+                  Email to {email}
+                </button>
+              ))}
+            </div>
+
+            {/* Cancel */}
+            <div className='mt-6 text-center'>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className='text-sm text-gray-400 hover:text-gray-600 transition'>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className='mt-6 flex flex-wrap gap-4 justify-between'>
         {/* Back to Weighment */}
         <button
@@ -853,21 +1070,220 @@ const VehicleWeighing = () => {
             Save
           </button>
 
-          {/* Print */}
+          {/* Print
           <button
             className='px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition'
             onClick={handlePrintPDF}>
+            Print
+          </button> */}
+
+          <button
+            className='px-6 py-3 bg-black text-white rounded-lg shadow hover:bg-gray-800 transition'
+            onClick={handleSmallPrint}>
             Print
           </button>
 
           {/* Share */}
           <button
             className='px-6 py-3 bg-orange-500 text-white rounded-lg shadow hover:bg-orange-600 transition'
-            onClick={handleShare}>
+            onClick={() => setShowShareModal(true)}>
             Share
           </button>
         </div>
       </div>
+      <div
+        id='printable-receipt'
+        style={{
+          width: '5in',
+          height: '3in',
+          padding: '10px',
+          fontSize: '11px', // compact font size
+          fontFamily: 'monospace', // for alignment
+          display: 'none',
+          boxSizing: 'border-box',
+          lineHeight: '1.3',
+        }}>
+        {/* Company Name */}
+        <div
+          style={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '13px',
+            marginBottom: '2px',
+          }}>
+          Test Private Limited
+        </div>
+
+        {/* Location */}
+        <div style={{ textAlign: 'center', marginBottom: '6px' }}>
+          📍 Location: Vivek's Home
+        </div>
+
+        {/* Separator */}
+        <div style={{ borderTop: '1px dashed #000', margin: '6px 0' }}></div>
+
+        {/* Date-Time and Receipt No */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '2px',
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            whiteSpace: 'nowrap',
+            gap: '4px',
+          }}>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}>
+            Date & Time: {printDateTime}
+          </span>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              textAlign: 'right',
+            }}>
+            Receipt No: {receiptNumber}
+          </span>
+        </div>
+
+        {/* Material and Transporter */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '2px',
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            whiteSpace: 'nowrap',
+            gap: '4px',
+          }}>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}>
+            Material: {weighingInfo.material || '-'}
+          </span>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              textAlign: 'right',
+            }}>
+            Transporter: {weighingInfo.transporter || '-'}
+          </span>
+        </div>
+
+        {/* Sender and Receiver */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '2px',
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            whiteSpace: 'nowrap',
+            gap: '4px',
+          }}>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}>
+            Sender: {weighingInfo.seller || '-'}
+          </span>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              textAlign: 'right',
+            }}>
+            Receiver: {weighingInfo.receiver || '-'}
+          </span>
+        </div>
+
+        {/* Separator */}
+        <div style={{ borderTop: '1px dashed #000', margin: '6px 0' }}></div>
+
+        {/* Gross / Tare / Net */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontWeight: 'bold',
+            marginBottom: '4px',
+          }}>
+          <span style={{ width: '33%' }}>Gross Wt: {firstWeight} Kg</span>
+          <span style={{ width: '33%', textAlign: 'center' }}>
+            Tare Wt: {secondWeight} Kg
+          </span>
+          <span style={{ width: '33%', textAlign: 'right' }}>
+            Net Wt: {netWeight} Kg
+          </span>
+        </div>
+
+        {/* Separator */}
+        <div style={{ borderTop: '1px dashed #000', margin: '6px 0' }}></div>
+
+        {/* Remarks */}
+        {weighingInfo.remarks && (
+          <div style={{ marginTop: '2px' }}>
+            Remarks: {weighingInfo.remarks}
+          </div>
+        )}
+
+        {/* Signature */}
+        <div style={{ textAlign: 'right', marginTop: '20px' }}>
+          Operator Signature: ___________
+        </div>
+      </div>
+
+      <style>
+        {`
+
+ @media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #printable-receipt, #printable-receipt * {
+    visibility: visible !important;
+    display: block !important;
+  }
+
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    z-index: 9999;
+    background: white;
+    padding: 10px;
+  }
+}
+
+  `}
+      </style>
 
       {/* ✅ Footer */}
       <footer className='w-full text-center py-4 bg-gray-100 text-gray-600 text-sm mt-6'>

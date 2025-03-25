@@ -32,14 +32,29 @@ const Weighment = () => {
     'Weighing Time': '4th March 2025, 14:42:20',
   };
   const fetchFirstWeightData = async () => {
-    if (!receiptNumber) return; // ✅ Prevents API call with empty value
+    if (!receiptNumber) return;
 
     try {
-      console.log(
-        `🔍 Fetching First Weight Data for Receipt: ${receiptNumber}`
-      );
+      let searchParam = receiptNumber.trim();
 
-      const response = await fetch(`/api/first-weight/${receiptNumber}`);
+      // ✅ If only last 4–5 digits are entered, build full receipt number
+      if (/^\d{4,5}$/.test(searchParam)) {
+        const today = new Date();
+        const formattedDate = `${String(today.getDate()).padStart(
+          2,
+          '0'
+        )}${String(today.getMonth() + 1).padStart(2, '0')}${today
+          .getFullYear()
+          .toString()
+          .slice(-2)}`; // ➝ "250325"
+
+        const fullReceipt = `KK/TPL/${formattedDate}/${searchParam}`;
+        searchParam = fullReceipt;
+      }
+
+      console.log(`🔍 Fetching First Weight Data for Receipt: ${searchParam}`);
+
+      const response = await fetch(`/api/first-weight/${searchParam}`);
       if (!response.ok)
         throw new Error(`HTTP Error! Status: ${response.status}`);
 
@@ -374,9 +389,7 @@ const Weighment = () => {
                     }
                   }}
                   onBlur={() => {
-                    if (receiptNumber !== 'KK/TPL/123456') {
-                      fetchFirstWeightData(); // ✅ Fetch actual data from backend on blur
-                    }
+                    fetchFirstWeightData(); // ✅ Fetch actual data from backend on blur
                   }}
                 />
               </div>
