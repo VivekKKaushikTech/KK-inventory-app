@@ -21,7 +21,7 @@ const WeightButtons = ({
         onClick={() => !disableFirstWeight && setActiveTab('firstWeight')}
         disabled={disableFirstWeight} // ✅ Prevent click if disabled
       >
-        First Weight
+        First / Gross Weight
       </button>
 
       {/* ✅ Second Weight Button (Disabled in Vehicle Inspection Page) */}
@@ -38,7 +38,7 @@ const WeightButtons = ({
           }
         }}
         disabled={disableSecondWeight}>
-        Second Weight
+        Second / Tare Weight
       </button>
     </div>
   );

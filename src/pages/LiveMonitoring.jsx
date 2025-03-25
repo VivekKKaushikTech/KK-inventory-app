@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaBell, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { Bell, ArrowLeft, ArrowRight } from 'lucide-react'; // ✅ Import Lucide Bell Icon
+import Header from '../components/Header'; // ✅ Import the Header component
 
 const MAX_LOCATIONS = 10; // Define max locations
 
@@ -101,38 +102,7 @@ const LiveMonitoring = () => {
   return (
     <div className='flex flex-col min-h-screen bg-white-100'>
       <div className='flex-grow p-4'>
-        <header className='bg-white shadow-md p-5 rounded-xl flex justify-between items-center'>
-          <div>
-            <h1 className='text-xl font-semibold text-orange-500'>
-              Live Monitoring
-            </h1>
-            <p className='text-sm text-gray-500'>
-              Test Private Limited - 📍 {userLat}, {userLng}
-            </p>
-            <p className='text-sm text-gray-500'>
-              📅 {currentTime.toLocaleString()}
-            </p>
-          </div>
-          <div className='flex items-center space-x-4'>
-            <Bell
-              size={24}
-              className='text-orange-500 cursor-pointer hover:text-gray-800'
-            />
-            <div className='flex items-center space-x-3'>
-              <img
-                src={employeePhoto}
-                alt='User'
-                className='w-12 h-12 rounded-full border border-orange-500 object-cover'
-              />
-              <div>
-                <p className='text-gray-800 font-medium'>{employeeName}</p>
-                <p className='text-gray-500 text-sm'>
-                  {designation} - {employeeID}
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header title='Live Monitoring' />
 
         {/* ✅ Location Multi-Selection Panel */}
         <div className='mt-6 bg-white p-6 rounded-xl shadow-md'>

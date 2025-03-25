@@ -5,6 +5,8 @@ const AttendanceConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  console.log('📍 Location Name received:', location.state?.locationName);
+
   // ✅ Extract Data from Navigation State
   const employeeName = location.state?.userName || 'Unknown User';
   const employeeID = location.state?.employeeID || '123456'; // Replace with actual employee ID
@@ -16,6 +18,8 @@ const AttendanceConfirmation = () => {
 
   // ✅ Loading State to Prevent Flickering
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  const isShiftEnd = location.state?.shiftEnd || false;
 
   useEffect(() => {
     if (employeePhoto) {
@@ -54,8 +58,11 @@ const AttendanceConfirmation = () => {
 
         {/* Confirmation Text */}
         <h2 className='text-xl font-bold text-black text-center'>
-          ✅ Attendance Marked Successfully,{' '}
-          <span className='text-black'>{employeeName}</span>!
+          ✅{' '}
+          {isShiftEnd
+            ? 'Shift End Marked Successfully'
+            : 'Attendance Marked Successfully'}
+          , <span className='text-black'>{employeeName}</span>!
         </h2>
 
         {/* Employee Details */}
@@ -70,7 +77,8 @@ const AttendanceConfirmation = () => {
             <strong>Date & Time:</strong> {attendanceTime}
           </p>
           <p className='text-gray-700'>
-            <strong>Location:</strong> {userLat}, {userLng}
+            <strong>Location:</strong>{' '}
+            {location.state?.locationName || `${userLat}, ${userLng}`}
           </p>
         </div>
 
@@ -78,26 +86,24 @@ const AttendanceConfirmation = () => {
         <button
           className='mt-6 bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600'
           onClick={() => {
-            console.log('✅ Navigating to QR Code Scan with:', {
-              userName: employeeName,
-              lat: userLat,
-              lng: userLng,
-              employeeID: employeeID,
-              designation: designation,
-              photo: employeePhoto,
-            });
-            navigate('/qr-code-scan', {
-              state: {
-                userName: employeeName,
-                lat: userLat,
-                lng: userLng,
-                employeeID: employeeID,
-                designation: designation,
-                photo: employeePhoto,
-              },
-            });
+            if (isShiftEnd) {
+              navigate('/');
+            } else {
+              navigate('/shift-handover', {
+                state: {
+                  userName: employeeName,
+                  lat: userLat,
+                  lng: userLng,
+                  locationName:
+                    location.state?.locationName || `${userLat}, ${userLng}`,
+                  employeeID: employeeID,
+                  designation: designation,
+                  photo: employeePhoto,
+                },
+              });
+            }
           }}>
-          Start Your Shift
+          {isShiftEnd ? 'End Shift' : 'Start Your Shift'}
         </button>
       </div>
 

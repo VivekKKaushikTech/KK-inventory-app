@@ -7,6 +7,7 @@ import {
   FaCheckCircle,
 } from 'react-icons/fa';
 import { Pencil, Bell, Trash2 } from 'lucide-react'; // ✅ Import Lucide Icons
+import Header from '../components/Header'; // ✅ Import the Header component
 
 const UserManagement = () => {
   const [employeeData, setEmployeeData] = useState(() => {
@@ -156,38 +157,7 @@ const UserManagement = () => {
   return (
     <div className='flex flex-col min-h-screen bg-white'>
       {/* ✅ Header Section */}
-      <header className='bg-white shadow-md p-5 rounded-xl flex justify-between items-center'>
-        <div>
-          <h1 className='text-xl font-semibold text-orange-500'>
-            User Management
-          </h1>
-          <p className='text-sm text-gray-500'>
-            Test Private Limited - 📍 {userLat}, {userLng}
-          </p>
-          <p className='text-sm text-gray-500'>
-            📅 {currentTime.toLocaleString()}
-          </p>
-        </div>
-        <div className='flex items-center space-x-4'>
-          <Bell
-            size={24}
-            className='text-orange-500 cursor-pointer hover:text-gray-800'
-          />
-          <div className='flex items-center space-x-3'>
-            <img
-              src={employeePhoto}
-              alt='User'
-              className='w-12 h-12 rounded-full border border-orange-500 object-cover'
-            />
-            <div>
-              <p className='text-gray-800 font-medium'>{employeeName}</p>
-              <p className='text-gray-500 text-sm'>
-                {designation} - {employeeID}
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header title='User Management' />
 
       <div className='flex-grow p-4'>
         {/* ✅ Toggle Button for Add User Section */}

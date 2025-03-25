@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { Bell, PieChart, BarChart2 } from 'lucide-react';
+import Header from '../components/Header'; // ✅ Import the Header component
 
 const Dashboard = () => {
   console.log('✅ Dashboard component is rendering!');
@@ -62,36 +63,7 @@ const Dashboard = () => {
     <div className='flex flex-col min-h-screen bg-white font-sans'>
       <div className='flex-grow p-6'>
         {/* ✅ Header */}
-        <header className='bg-white shadow-md p-5 rounded-xl flex justify-between items-center'>
-          <div>
-            <h1 className='text-xl font-semibold text-orange-500'>Dashboard</h1>
-            <p className='text-sm text-gray-500'>
-              Test Private Limited - 📍 {userLat}, {userLng}
-            </p>
-            <p className='text-sm text-gray-500'>
-              📅 {currentTime.toLocaleString()}
-            </p>
-          </div>
-          <div className='flex items-center space-x-4'>
-            <Bell
-              size={24}
-              className='text-orange-500 cursor-pointer hover:text-gray-800'
-            />
-            <div className='flex items-center space-x-3'>
-              <img
-                src={employeePhoto}
-                alt='User'
-                className='w-12 h-12 rounded-full border border-orange-500 object-cover'
-              />
-              <div>
-                <p className='text-gray-800 font-medium'>{employeeName}</p>
-                <p className='text-gray-500 text-sm'>
-                  {designation} - {employeeID}
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header title='Dashboard' />
 
         {/* ✅ Statistics Cards */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6'>

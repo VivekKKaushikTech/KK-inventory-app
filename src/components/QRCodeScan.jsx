@@ -29,12 +29,13 @@ const QRCodeScan = () => {
 
           // ✅ Navigate to Shift Handover Page with Scanned Data
           setTimeout(() => {
-            navigate('/shift-handover', {
+            navigate('/null', {
               state: {
                 scannedQR: decodedText,
                 userName: location.state?.userName || 'Unknown User',
                 lat: location.state?.lat || 'Unknown', // ✅ Pass Latitude
                 lng: location.state?.lng || 'Unknown', // ✅ Pass Longitude
+                locationName: location.state?.locationName || '',
                 employeeID: location.state?.employeeID || '123456',
                 designation: location.state?.designation || 'Operator',
                 photo: location.state?.photo || '/assets/default-user.png',

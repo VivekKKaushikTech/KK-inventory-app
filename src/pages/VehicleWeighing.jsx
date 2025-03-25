@@ -210,7 +210,8 @@ const VehicleWeighing = () => {
   const [weighingInfo, setWeighingInfo] = useState({
     material: '',
     transporter: '',
-    party: '',
+    seller: '',
+    buyer: '',
     invoiceChallanNo: '',
     remarks: '',
   });
@@ -561,28 +562,65 @@ const VehicleWeighing = () => {
               </div>
             </div>
 
-            {/* Party Dropdown */}
+            {/* Seller / Sender Dropdown */}
             <div className='flex flex-col relative'>
-              <label className='text-gray-600 font-medium mb-1'>Party</label>
+              <label className='text-gray-600 font-medium mb-1'>
+                Seller / Sender
+              </label>
               <div className='flex items-center gap-2'>
                 <select
                   className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
-                  value={weighingInfo.party}
+                  value={weighingInfo.seller}
                   onChange={(e) =>
-                    setWeighingInfo({ ...weighingInfo, party: e.target.value })
+                    setWeighingInfo({ ...weighingInfo, seller: e.target.value })
                   }>
-                  <option value=''>Select Party</option>
-                  {parties.map((party, index) => (
+                  <option value=''>Select Seller / Sender</option>
+                  {parties.map((seller, index) => (
                     <option
                       key={index}
-                      value={party}>
-                      {party}
+                      value={seller}>
+                      {seller}
                     </option>
                   ))}
                 </select>
                 <button
                   onClick={() => {
-                    setModalType('Party');
+                    setModalType('seller');
+                    setIsModalOpen(true);
+                  }}
+                  className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
+                  <Plus size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Buyer / Receiver Dropdown */}
+            <div className='flex flex-col relative'>
+              <label className='text-gray-600 font-medium mb-1'>
+                Buyer / Receiver
+              </label>
+              <div className='flex items-center gap-2'>
+                <select
+                  className='w-full p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-orange-400 outline-none'
+                  value={weighingInfo.receiver}
+                  onChange={(e) =>
+                    setWeighingInfo({
+                      ...weighingInfo,
+                      receiver: e.target.value,
+                    })
+                  }>
+                  <option value=''>Select Buyer / Receiver</option>
+                  {parties.map((receiver, index) => (
+                    <option
+                      key={index}
+                      value={receiver}>
+                      {receiver}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => {
+                    setModalType('receiver');
                     setIsModalOpen(true);
                   }}
                   className='p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition'>
@@ -679,7 +717,7 @@ const VehicleWeighing = () => {
                 </>
               )}
 
-              {/* ✅ Remarks Field (Only for Transporter & Party) */}
+              {/* ✅ Remarks Field (Only for Transporter & seller) */}
               {modalType !== 'Material' && (
                 <>
                   <label className='text-gray-700 font-medium'>Remarks</label>
@@ -709,7 +747,9 @@ const VehicleWeighing = () => {
                       setMaterials([...materials, newItem.name]);
                     if (modalType === 'Transporter')
                       setTransporters([...transporters, newItem.name]);
-                    if (modalType === 'Party')
+                    if (modalType === 'Seller')
+                      setParties([...parties, newItem.name]);
+                    if (modalType === 'Buyer')
                       setParties([...parties, newItem.name]);
 
                     setNewItem({
@@ -766,9 +806,11 @@ const VehicleWeighing = () => {
             {/* Weight Table */}
             <div className='mt-6 border-t border-gray-300'>
               <div className='grid grid-cols-3 text-center font-semibold text-gray-700 mt-3'>
-                <div className='border-r border-gray-300 p-3'>First Weight</div>
                 <div className='border-r border-gray-300 p-3'>
-                  Second Weight
+                  First / Gross Weight
+                </div>
+                <div className='border-r border-gray-300 p-3'>
+                  Second / Tare Weight
                 </div>
                 <div className='p-3'>Net Weight</div>
               </div>

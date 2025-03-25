@@ -10,6 +10,7 @@ const ShiftHandover = () => {
   console.log('🟢 Debug: ShiftHandover received userName →', userName);
   const userLat = location.state?.lat ?? 'Unknown';
   const userLng = location.state?.lng ?? 'Unknown';
+  const locationName = location.state?.locationName || `${userLat}, ${userLng}`;
 
   console.log('📌 Debug: Received Location →', userLat, userLng);
   console.log('📌 Debug: Sending Data to Dashboard →', {
@@ -18,6 +19,7 @@ const ShiftHandover = () => {
     designation: location.state?.designation,
     lat: location.state?.lat,
     lng: location.state?.lng,
+    locationName: location.state?.locationName || '',
     employeePhoto: location.state?.photo,
   });
 
@@ -183,14 +185,11 @@ const ShiftHandover = () => {
           className='h-15'
         />
       </div>
-
       {/* Title & Info */}
       <h1 className='text-2xl font-bold text-gray-800'>
         Please check and confirm your shift-handover list, {userName}!
       </h1>
-      <p className='text-gray-600 mt-2'>
-        📍 Location: {userLat}, {userLng}
-      </p>
+      <p className='text-gray-600 mt-2'>📍 Location: {locationName}</p>
       <p className='text-gray-600 mb-6'>📅 Date & Time: {currentDateTime}</p>
 
       {/* Checklist Table */}
@@ -248,7 +247,6 @@ const ShiftHandover = () => {
           </div>
         ))}
       </div>
-
       {/* Submit Button */}
       <button
         className='w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 mt-6'
@@ -263,6 +261,7 @@ const ShiftHandover = () => {
             designation: location.state?.designation || 'Operator',
             lat: location.state?.lat || 'Unknown',
             lng: location.state?.lng || 'Unknown',
+            locationName: location.state?.locationName || 'Unknown Location',
             employeePhoto: location.state?.photo || '/assets/default-user.png',
           };
 
@@ -277,7 +276,6 @@ const ShiftHandover = () => {
         }}>
         Submit
       </button>
-
       {/* Footer */}
       <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
         © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights

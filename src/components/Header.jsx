@@ -3,6 +3,22 @@ import { FaBell } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { Bell } from 'lucide-react'; // ✅ Import Lucide Icons
 
+// 🔁 Location Mapping
+const locationMap = {
+  '28.422537,77.03268': "Vivek's Home",
+  '28.4238432,77.0474929': 'Gurgaon Class',
+  '28.6441586,77.1398364': 'Kanta King Kirti Nagar',
+  '19.076,72.8777': 'Mumbai',
+  '28.423,77.031': 'Gurgaon',
+};
+
+// 🔁 Get Location Name Function
+function getLocationName(lat, lng) {
+  const rawKey = `${lat},${lng}`;
+  const roundedKey = `${Number(lat).toFixed(5)},${Number(lng).toFixed(5)}`;
+  return locationMap[rawKey] || locationMap[roundedKey] || `${lat}, ${lng}`;
+}
+
 const Header = ({ title }) => {
   const location = useLocation();
   const storedData = localStorage.getItem('dashboardUserData');
@@ -15,6 +31,10 @@ const Header = ({ title }) => {
   const designation = employeeData?.designation || 'Operator';
   const userLat = employeeData?.lat ?? 'Unknown';
   const userLng = employeeData?.lng ?? 'Unknown';
+  const userLocationName =
+    employeeData?.locationName ||
+    (userLat && userLng ? getLocationName(userLat, userLng) : 'Unknown');
+
   const employeePhoto =
     employeeData?.employeePhoto || '/assets/default-user.png';
 
@@ -31,10 +51,11 @@ const Header = ({ title }) => {
     <header className='bg-white shadow-md p-5 rounded-xl flex justify-between items-center'>
       <div>
         <h1 className='text-xl font-semibold text-orange-500'>
-          Live Monitoring
+          {title || 'Live Monitoring'}
         </h1>
+
         <p className='text-sm text-gray-500'>
-          Test Private Limited - 📍 {userLat}, {userLng}
+          Test Private Limited - 📍 {userLocationName}
         </p>
         <p className='text-sm text-gray-500'>
           📅 {currentTime.toLocaleString()}

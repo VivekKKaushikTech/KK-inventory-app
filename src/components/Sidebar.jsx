@@ -23,6 +23,11 @@ import {
   X, // Close Button
 } from 'lucide-react'; // ✅ Import Lucide Icons
 
+// ✅ Load shift data from localStorage
+const shiftDataRaw = localStorage.getItem('dashboardUserShiftData');
+const userShiftData = shiftDataRaw ? JSON.parse(shiftDataRaw) : {};
+
+
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate(); // ✅ Initialize navigate hook
@@ -34,11 +39,29 @@ const Sidebar = () => {
     setIsLogoutModalOpen(true);
   };
 
+  const handleCancelLogout = () => {
+    setIsLogoutModalOpen(false);
+  };
+
   // ✅ Confirm Logout and Navigate to Login Page
   const handleConfirmLogout = () => {
-    localStorage.clear(); // ✅ Clear all stored user data
-    navigate('/'); // ✅ Redirect to Login Page
+    const storedData = localStorage.getItem('dashboardUserData');
+    const userData = storedData ? JSON.parse(storedData) : {};
+  
+    const employeeMobile =
+      userData.employeeMobile || Object.keys(userShiftData)[0]; // fallback to first number
+  
+    console.log('🧠 Stored userData:', userData);
+  
+    navigate('/attendance', {
+      state: {
+        userName: userData.employeeName,
+        userMobile: employeeMobile,
+        shiftEnd: true,
+      },
+    });
   };
+  
 
   return (
     <>

@@ -39,6 +39,7 @@ const Login = () => {
     9650505555: 'Mohit',
     9650514444: 'Vishisht',
   };
+
   const correctPassword = '123456';
   const registeredNumbers = Object.keys(userData);
 
@@ -63,9 +64,37 @@ const Login = () => {
       setButtonText('Logging in...');
       setTimeout(() => {
         setButtonText('Log In');
+
+        // ✅ Store the userData in localStorage
+        localStorage.setItem(
+          'dashboardUserData',
+          JSON.stringify({
+            employeeName: userData[mobile],
+            employeeMobile: mobile.trim(), // ✅ Store this!
+            employeeID: '123456',
+            designation: 'Operator',
+            lat: 28.422537,
+            lng: 77.03268,
+            employeePhoto: '/assets/default-user.png',
+            locationName: "Vivek's Home",
+          })
+        );
+
+        localStorage.setItem(
+          'dashboardUserShiftData',
+          JSON.stringify({
+            8860652067: { shiftStart: '01:00', lat: 28.422537, lng: 77.03268 },
+            9650505555: { shiftStart: '10:00', lat: 19.076, lng: 72.8777 },
+            9650514444: { shiftStart: '01:00', lat: 28.423, lng: 77.031 },
+          })
+        );
+
         navigate('/attendance', {
-          state: { userName: userData[mobile], userMobile: mobile },
-        }); // ✅ Correct navigation
+          state: {
+            userName: userData[mobile],
+            userMobile: mobile,
+          },
+        });
       }, 1500);
     }
   };
@@ -161,10 +190,6 @@ const App = () => {
       <Route
         path='/attendance-confirmation'
         element={<AttendanceConfirmation />}
-      />
-      <Route
-        path='/qr-code-scan'
-        element={<QRCodeScan />}
       />
       <Route
         path='/shift-handover'

@@ -1,16 +1,37 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const FaceScan = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showCamera, setShowCamera] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const location = useLocation();
 
-  // ✅ Start Camera Function
+  const isShiftEnd = location.state?.shiftEnd || false;
+
+  // 📍 Known Locations (for fuzzy matching)
+  const knownLocations = [
+    { name: "Vivek's Home", lat: 28.422537, lng: 77.03268 },
+    { name: "Vivek's Class", lat: 28.4238432, lng: 77.0474929 },
+    { name: 'Mumbai Office', lat: 19.076, lng: 72.8777 },
+    { name: 'Gurgaon Office', lat: 28.423, lng: 77.031 },
+  ];
+
+  // 📍 Haversine distance formula
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth radius in KM
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
   const startCamera = () => {
     setShowCamera(true);
     navigator.mediaDevices
@@ -23,23 +44,35 @@ const FaceScan = () => {
       .catch((err) => console.error('❌ Camera Access Denied:', err));
   };
 
-  // ✅ Capture & Upload Image
   const captureAndUpload = () => {
     if (!videoRef.current || !canvasRef.current) return;
 
     const context = canvasRef.current.getContext('2d');
     context.drawImage(videoRef.current, 0, 0, 300, 300);
-
-    // ✅ Convert Captured Image to Base64
     const imageUrl = canvasRef.current.toDataURL('image/png');
 
-    // ✅ Fetch current location
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
 
-        // Simulate upload progress
+        // 🔍 Fuzzy match to closest known location
+        let closestLocation = 'Unknown Location';
+        let minDistance = Infinity;
+
+        knownLocations.forEach((loc) => {
+          const dist = getDistance(userLat, userLng, loc.lat, loc.lng);
+          console.log(`📏 Distance from ${loc.name}: ${dist.toFixed(3)} km`);
+          if (dist < minDistance && dist < 0.2) {
+            // 200 meters
+            minDistance = dist;
+            closestLocation = loc.name;
+          }
+        });
+
+        console.log('📍 Location Name being passed:', closestLocation);
+
+        // Simulate upload
         let progress = 0;
         const interval = setInterval(() => {
           progress += 10;
@@ -49,11 +82,13 @@ const FaceScan = () => {
             alert('✅ Face Captured Successfully!');
             navigate('/attendance-confirmation', {
               state: {
-                userName: location.state?.userName || 'Unknown User', // ✅ Pass the userName
+                userName: location.state?.userName || 'Unknown User',
                 faceCaptured: true,
-                lat: userLat, // ✅ Pass Current Latitude
-                lng: userLng, // ✅ Pass Current Longitude
-                photo: imageUrl, // ✅ Pass Captured Photo
+                lat: userLat,
+                lng: userLng,
+                photo: imageUrl,
+                locationName: closestLocation,
+                shiftEnd: isShiftEnd,
               },
             });
           }
@@ -68,7 +103,6 @@ const FaceScan = () => {
   return (
     <div className='min-h-screen flex flex-col bg-white'>
       <div className='flex-grow flex flex-col md:flex-row items-center justify-center py-12 px-4 md:gap-20'>
-        {/* Left Side - Face Scan Illustration */}
         <div className='hidden md:block w-1/2'>
           <img
             src='/assets/selfie.svg'
@@ -77,7 +111,6 @@ const FaceScan = () => {
           />
         </div>
 
-        {/* Right Side - Face Scan Instructions */}
         <div className='w-full md:w-1/3 bg-white p-10 shadow-md rounded-lg text-center'>
           <img
             src='/assets/kanta-king-logo.svg'
@@ -86,13 +119,16 @@ const FaceScan = () => {
           />
 
           <h1 className='text-2xl font-bold text-gray-800 mb-4'>
-            SMILE TO MARK YOUR ATTENDANCE
+            {isShiftEnd
+              ? 'SMILE TO END YOUR SHIFT'
+              : 'SMILE TO MARK YOUR ATTENDANCE'}
           </h1>
           <p className='text-gray-600 mb-6'>
-            Scan your face to verify your identity
+            {isShiftEnd
+              ? 'Scan your face to confirm shift end.'
+              : 'Scan your face to verify your identity'}
           </p>
 
-          {/* Camera & Capture UI */}
           {showCamera ? (
             <div>
               <video
@@ -104,8 +140,6 @@ const FaceScan = () => {
                 ref={canvasRef}
                 className='hidden'
               />
-
-              {/* Upload Progress Bar */}
               <div className='relative w-full bg-gray-200 rounded-full h-4 mt-4'>
                 <div
                   className='bg-orange-500 h-4 rounded-full'
@@ -115,16 +149,13 @@ const FaceScan = () => {
                 Hold the phone straight in front of your face and smile. We love
                 to see you happy!
               </p>
-
-              {/* Capture Button */}
               <button
                 className='w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 mt-4'
                 onClick={captureAndUpload}>
-                Capture & Upload
+                {isShiftEnd ? 'Capture & End Shift' : 'Capture & Upload'}
               </button>
             </div>
           ) : (
-            /* Button to Start Camera */
             <button
               className='w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600'
               onClick={startCamera}>
