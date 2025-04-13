@@ -6,10 +6,10 @@ import { Bell } from 'lucide-react'; // ✅ Import Lucide Icons
 // 🔁 Location Mapping
 const locationMap = {
   '28.422537,77.03268': "Vivek's Home",
-  '28.4238432,77.0474929': 'Gurgaon Class',
-  '28.6441586,77.1398364': 'Kanta King Kirti Nagar',
-  '19.076,72.8777': 'Mumbai',
-  '28.423,77.031': 'Gurgaon',
+  '28.4238432,77.0474929': "Vivek's Class",
+  '19.076,72.8777': 'Mumbai Office',
+  '28.423,77.031': 'Gurgaon Office',
+  '28.6109361,77.5959684': 'Test Location',
 };
 
 // 🔁 Get Location Name Function
@@ -55,17 +55,13 @@ const Header = ({ title }) => {
         </h1>
 
         <p className='text-sm text-gray-500'>
-          Test Private Limited - 📍 {userLocationName}
+          M/s Kanta King - 📍 {userLocationName}
         </p>
         <p className='text-sm text-gray-500'>
           📅 {currentTime.toLocaleString()}
         </p>
       </div>
       <div className='flex items-center space-x-4'>
-        <Bell
-          size={24}
-          className='text-orange-500 cursor-pointer hover:text-gray-800'
-        />
         <div className='flex items-center space-x-3'>
           <img
             src={employeePhoto}

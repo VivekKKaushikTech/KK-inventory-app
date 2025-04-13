@@ -1,40 +1,28 @@
-import React, { useState } from 'react'; // ✅ Import useState
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  FaTachometerAlt,
-  FaTruck,
-  FaChartBar,
-  FaCamera,
-  FaCog,
-  FaUsers,
-  FaSignOutAlt,
-  FaBars, // ✅ Import for mobile menu toggle
-  FaTimes, // ✅ Import for mobile menu toggle
-} from 'react-icons/fa';
+  LayoutDashboard,
+  PlusSquare,
+  Truck,
+  ClipboardList,
+  Users,
+  LogOut,
+  Menu,
+  X,
+  Boxes,
+} from 'lucide-react';
 
-import {
-  LayoutDashboard, // Dashboard
-  Truck, // Weighment
-  FileText, // Reports
-  Monitor, // Live Monitoring
-  Users, // User Management
-  LogOut, // Logout
-  Menu, // Sidebar Toggle Button
-  X, // Close Button
-} from 'lucide-react'; // ✅ Import Lucide Icons
-
-// ✅ Load shift data from localStorage
 const shiftDataRaw = localStorage.getItem('dashboardUserShiftData');
 const userShiftData = shiftDataRaw ? JSON.parse(shiftDataRaw) : {};
 
-
 const Sidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // ✅ Initialize navigate hook
-  const [isOpen, setIsOpen] = useState(false); // ✅ Sidebar state
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // ✅ State for logout confirmation modal
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [hoverEnabled, setHoverEnabled] = useState(true);
+  const collapseTimerRef = useRef(null);
 
-  // ✅ Show Logout Confirmation Modal
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
   };
@@ -43,97 +31,100 @@ const Sidebar = () => {
     setIsLogoutModalOpen(false);
   };
 
-  // ✅ Confirm Logout and Navigate to Login Page
   const handleConfirmLogout = () => {
-    const storedData = localStorage.getItem('dashboardUserData');
-    const userData = storedData ? JSON.parse(storedData) : {};
-  
-    const employeeMobile =
-      userData.employeeMobile || Object.keys(userShiftData)[0]; // fallback to first number
-  
-    console.log('🧠 Stored userData:', userData);
-  
-    navigate('/attendance', {
-      state: {
-        userName: userData.employeeName,
-        userMobile: employeeMobile,
-        shiftEnd: true,
-      },
+    localStorage.removeItem('dashboardUserData');
+    localStorage.removeItem('dashboardUserShiftData');
+    navigate('/');
+  };
+
+  const toggleSidebar = () => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      if (!next) {
+        setHoverEnabled(false);
+        clearTimeout(collapseTimerRef.current);
+        setTimeout(() => setHoverEnabled(true), 1000);
+      }
+      return next;
     });
   };
-  
+
+  useEffect(() => {
+    if (window.innerWidth >= 768) {
+      collapseTimerRef.current = setTimeout(() => {
+        setIsOpen(false);
+      }, 5000);
+      return () => clearTimeout(collapseTimerRef.current);
+    }
+  }, []);
 
   return (
     <>
-      {/* ✅ Mobile Toggle Button */}
       <button
         className='md:hidden fixed top-4 left-4 z-50 bg-orange-500 text-white p-2 rounded-lg shadow-lg'
-        onClick={() => setIsOpen(!isOpen)}>
+        onClick={toggleSidebar}>
         {isOpen ? <X className='text-xl' /> : <Menu className='text-xl' />}
       </button>
 
-      {/* ✅ Sidebar */}
       <aside
+        onMouseEnter={() => {
+          if (hoverEnabled) setIsOpen(true);
+        }}
+        onMouseLeave={() => {
+          if (hoverEnabled) setIsOpen(false);
+        }}
         className={`fixed md:relative top-0 left-0 min-h-screen bg-orange-500 text-white p-5 flex flex-col transition-all duration-300 
-        ${
-          isOpen
-            ? 'translate-x-0 w-64 opacity-100 visible'
-            : '-translate-x-full opacity-0 invisible'
-        } 
-        md:w-64 md:translate-x-0 md:opacity-100 md:visible`}>
-        {/* ✅ Logo */}
-        <div className='mb-8'>
+        ${isOpen ? 'w-64' : 'w-20'} z-40`}>
+        <div className='mb-8 flex justify-center'>
           <img
             src='/assets/kanta-king-logo-white.svg'
             alt='Logo'
-            className='h-20 mx-auto'
+            className={`transition-all duration-300 ${
+              isOpen ? 'h-20' : 'h-10'
+            }`}
           />
         </div>
 
-        {/* ✅ Sidebar Navigation */}
         <nav className='flex-grow'>
-          <ul
-            className={`space-y-2 transition-all duration-300 
-            ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'} 
-            md:opacity-100 md:visible`}>
+          <ul className='space-y-2'>
             {[
               {
                 name: 'Dashboard',
                 path: '/dashboard',
-                icon: <LayoutDashboard size={22} />, // ✅ Lucide Dashboard Icon
+                icon: <LayoutDashboard size={22} />,
               },
               {
-                name: 'Weighment',
-                path: '/dashboard/weighment',
-                icon: <Truck size={22} />, // ✅ Lucide Truck Icon
+                name: 'Inventory',
+                path: '/dashboard/inventory',
+                icon: <Boxes size={22} />,
               },
               {
-                name: 'Reports',
-                path: '/dashboard/reports',
-                icon: <FileText size={22} />, // ✅ Lucide FileText Icon
+                name: 'Add Item',
+                path: '/dashboard/add-item',
+                icon: <PlusSquare size={22} />,
               },
               {
-                name: 'Live Monitoring',
-                path: '/dashboard/live-monitoring',
-                icon: <Monitor size={22} />, // ✅ Lucide Monitor Icon
+                name: 'Move Item',
+                path: '/dashboard/move-item',
+                icon: <Truck size={22} />,
+              },
+              {
+                name: 'Activity Log',
+                path: '/dashboard/activity-log',
+                icon: <ClipboardList size={22} />,
               },
               {
                 name: 'User Management',
                 path: '/dashboard/user-management',
-                icon: <Users size={22} />, // ✅ Lucide Users Icon
+                icon: <Users size={22} />,
               },
             ].map((item) => {
-              // Handle Dashboard separately (exact match)
               const isDashboard =
                 item.path === '/dashboard' &&
                 location.pathname === '/dashboard';
-
-              // Highlight Weighment for all its subpages
               const isWeighment =
                 item.path === '/dashboard/weighment' &&
                 location.pathname.startsWith('/dashboard/weighment');
-
-              // Generic check for other items
               const isActive =
                 isDashboard || isWeighment || location.pathname === item.path;
 
@@ -144,16 +135,13 @@ const Sidebar = () => {
                     className={`relative flex items-center space-x-3 p-3 w-full transition-all duration-300
                       ${
                         isActive
-                          ? 'bg-white text-orange-500 pl-6 pr-20 rounded-l-[40px] rounded-r-[-40px] w-[calc(100%+25px)] -mr-5'
+                          ? 'bg-white text-orange-500 rounded-xl'
                           : 'hover:bg-orange-600 text-white'
-                      }`}
-                    onClick={() => setIsOpen(false)} // ✅ Close sidebar when a menu is clicked
-                  >
-                    <span
-                      className={isActive ? 'text-orange-500' : 'text-white'}>
-                      {item.icon}
-                    </span>
-                    <span>{item.name}</span>
+                      }
+                      ${!isOpen ? 'justify-center' : ''}`}
+                    onClick={() => setIsOpen(false)}>
+                    <span>{item.icon}</span>
+                    {isOpen && <span>{item.name}</span>}
                   </Link>
                 </li>
               );
@@ -161,21 +149,17 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-        {/* ✅ Logout Button with Confirmation Popup */}
         <button
-          className='mt-auto flex items-center space-x-3 w-full p-3 rounded-lg bg-white text-orange-500 hover:bg-gray-200'
+          className='mt-auto flex items-center space-x-3 w-full p-3 rounded-lg bg-white text-orange-500 hover:bg-gray-200 justify-center'
           onClick={handleLogoutClick}>
-          {' '}
-          {/* ✅ Opens confirmation modal */}
           <LogOut size={22} />
-          <span>Logout</span>
+          {isOpen && <span>Logout</span>}
         </button>
       </aside>
 
-      {/* ✅ Logout Confirmation Modal */}
       {isLogoutModalOpen && (
-        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='bg-white p-6 rounded-lg shadow-lg w-96 text-center'>
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50'>
+          <div className='bg-white p-6 rounded-lg shadow-lg w-96 text-center z-50'>
             <h2 className='text-lg font-bold text-red-600 mb-4'>
               Confirm Logout
             </h2>
@@ -183,16 +167,13 @@ const Sidebar = () => {
               Are you sure you want to log out?
             </p>
             <div className='flex justify-center space-x-4'>
-              {/* ✅ Confirm Logout */}
               <button
                 onClick={handleConfirmLogout}
                 className='bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition'>
                 Yes, Logout
               </button>
-
-              {/* ✅ Cancel Logout */}
               <button
-                onClick={() => setIsLogoutModalOpen(false)}
+                onClick={handleCancelLogout}
                 className='bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition'>
                 Cancel
               </button>

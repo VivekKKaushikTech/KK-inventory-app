@@ -28,18 +28,18 @@ const AttendanceConfirmation = () => {
   }, [employeePhoto]);
 
   return (
-    <div className='min-h-screen flex flex-col bg-white'>
+    <div className='min-h-screen flex flex-col bg-gradient-to-br from-white to-white'>
       {/* Main Content */}
-      <div className='flex-grow flex flex-col items-center justify-center py-12 px-4'>
-        {/* Kanta King Logo - Top Center */}
+      <div className='flex-grow flex flex-col items-center justify-center px-4 py-12'>
+        {/* Logo */}
         <img
           src='/assets/kanta-king-logo.svg'
           alt='Kanta King Logo'
-          className='h-17 mb-6'
+          className='h-20 mb-6 drop-shadow-md'
         />
 
-        {/* Employee Selfie in Circle (Fixed Image Issue) */}
-        <div className='w-32 h-32 rounded-full border-4 border-orange-500 overflow-hidden mb-4'>
+        {/* Selfie Frame */}
+        <div className='w-36 h-36 rounded-full border-4 border-orange-500 overflow-hidden mb-6 shadow-lg ring-2 ring-orange-200'>
           {imageLoaded ? (
             <img
               src={employeePhoto}
@@ -47,70 +47,77 @@ const AttendanceConfirmation = () => {
               className='w-full h-full object-cover'
               onError={(e) => {
                 e.target.src = '/assets/default-user.png';
-              }} // ✅ Fallback Image
+              }}
             />
           ) : (
-            <p className='text-gray-500 flex items-center justify-center h-full'>
+            <div className='flex items-center justify-center h-full text-gray-500 text-sm'>
               Loading...
-            </p>
+            </div>
           )}
         </div>
 
-        {/* Confirmation Text */}
-        <h2 className='text-xl font-bold text-black text-center'>
-          ✅{' '}
-          {isShiftEnd
-            ? 'Shift End Marked Successfully'
-            : 'Attendance Marked Successfully'}
-          , <span className='text-black'>{employeeName}</span>!
+        {/* Confirmation Message */}
+        <h2 className='text-2xl font-bold text-center text-orange-600 mb-2'>
+          {isShiftEnd ? '✅ Shift Ended' : '✅ Verified Successfully'}
         </h2>
+        <p className='text-gray-700 text-center text-lg font-medium mb-6'>
+          Welcome, {employeeName}!
+        </p>
 
-        {/* Employee Details */}
-        <div className='bg-gray-100 p-4 rounded-lg shadow-md w-full max-w-sm text-center mt-4'>
-          <p className='text-gray-700'>
-            <strong>Employee ID:</strong> {employeeID}
+        {/* Details Card */}
+        <div
+          className='w-full max-w-sm p-6 text-sm text-gray-800 space-y-3
+  bg-white/90 backdrop-blur-xl 
+  rounded-2xl border border-white/30 
+  shadow-[0_12px_32px_rgba(255,101,0,0.2)] 
+  ring-1 ring-orange-100 hover:shadow-[0_16px_40px_rgba(255,101,0,0.25)]
+  transition-all duration-300'>
+          <p>
+            <strong>👤 Employee ID:</strong> {employeeID}
           </p>
-          <p className='text-gray-700'>
-            <strong>Designation:</strong> {designation}
+          <p>
+            <strong>🧰 Designation:</strong> {designation}
           </p>
-          <p className='text-gray-700'>
-            <strong>Date & Time:</strong> {attendanceTime}
+          <p>
+            <strong>🕒 Date & Time:</strong> {attendanceTime}
           </p>
-          <p className='text-gray-700'>
-            <strong>Location:</strong>{' '}
+          <p>
+            <strong>📍 Location:</strong>{' '}
             {location.state?.locationName || `${userLat}, ${userLng}`}
           </p>
         </div>
 
-        {/* Start Shift Button */}
+        {/* Button */}
         <button
           className='mt-6 bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600'
           onClick={() => {
-            if (isShiftEnd) {
-              navigate('/');
-            } else {
-              navigate('/shift-handover', {
-                state: {
-                  userName: employeeName,
-                  lat: userLat,
-                  lng: userLng,
-                  locationName:
-                    location.state?.locationName || `${userLat}, ${userLng}`,
-                  employeeID: employeeID,
-                  designation: designation,
-                  photo: employeePhoto,
-                },
-              });
-            }
+            navigate('/dashboard', {
+              state: {
+                userName: employeeName,
+                lat: userLat,
+                lng: userLng,
+                locationName:
+                  location.state?.locationName || `${userLat}, ${userLng}`,
+                employeeID: employeeID,
+                designation: designation,
+                photo: employeePhoto,
+              },
+            });
           }}>
-          {isShiftEnd ? 'End Shift' : 'Start Your Shift'}
+          🚀 Start the Inventory
         </button>
       </div>
 
       {/* Footer */}
-      <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
-        © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights
-        reserved.
+      <footer
+        className='w-full text-center py-4 px-6 mt-6 
+  bg-white/60 backdrop-blur-md 
+  border-t border-orange-100 
+  shadow-[0_-2px_10px_rgba(0,0,0,0.05)] 
+  text-sm text-gray-600 font-medium tracking-wide'>
+        © {new Date().getFullYear()} Crafted with{' '}
+        <span className='text-red-500'>❤</span> by Kanta King Technologies Pvt
+        Ltd. All rights reserved.
       </footer>
     </div>
   );

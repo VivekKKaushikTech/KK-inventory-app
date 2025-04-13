@@ -38,9 +38,9 @@ const UserManagement = () => {
 
   const [roles] = useState(['Admin', 'Manager', 'Operator', 'Viewer']);
   const [tasks] = useState([
-    'Weighing',
-    'Reports',
-    'Live Monitoring',
+    'Add Item',
+    'Move Item',
+    'Activity Log',
     'User Management',
   ]);
   const [selectedUserIndex, setSelectedUserIndex] = useState(null);
@@ -387,9 +387,15 @@ const UserManagement = () => {
         )}
       </div>
       {/* ✅ Footer */}
-      <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
-        © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights
-        reserved.
+      <footer
+        className='w-full text-center py-4 px-6 mt-6 
+  bg-white/60 backdrop-blur-md 
+  border-t border-orange-100 
+  shadow-[0_-2px_10px_rgba(0,0,0,0.05)] 
+  text-sm text-gray-600 font-medium tracking-wide'>
+        © {new Date().getFullYear()} Crafted with{' '}
+        <span className='text-red-500'>❤</span> by Kanta King Technologies Pvt
+        Ltd. All rights reserved.
       </footer>
     </div>
   );

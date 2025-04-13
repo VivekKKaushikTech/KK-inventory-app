@@ -17,6 +17,7 @@ const FaceScan = () => {
     { name: "Vivek's Class", lat: 28.4238432, lng: 77.0474929 },
     { name: 'Mumbai Office', lat: 19.076, lng: 72.8777 },
     { name: 'Gurgaon Office', lat: 28.423, lng: 77.031 },
+    { name: 'Test Location', lat: 28.6109361, lng: 77.5959684 },
   ];
 
   // 📍 Haversine distance formula
@@ -111,7 +112,7 @@ const FaceScan = () => {
           />
         </div>
 
-        <div className='w-full md:w-1/3 bg-white p-10 shadow-md rounded-lg text-center'>
+        <div className='w-full md:w-1/3 p-10 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/30 shadow-[0_20px_50px_rgba(255,101,0,0.2)] ring-1 ring-orange-100 hover:shadow-[0_25px_60px_rgba(255,101,0,0.3)] transition-all duration-300'>
           <img
             src='/assets/kanta-king-logo.svg'
             alt='Kanta King Logo'
@@ -121,7 +122,7 @@ const FaceScan = () => {
           <h1 className='text-2xl font-bold text-gray-800 mb-4'>
             {isShiftEnd
               ? 'SMILE TO END YOUR SHIFT'
-              : 'SMILE TO MARK YOUR ATTENDANCE'}
+              : 'मुस्कुराइए, आप इन्वेंटरी कर रहें हैं 😊'}
           </h1>
           <p className='text-gray-600 mb-6'>
             {isShiftEnd
@@ -165,9 +166,15 @@ const FaceScan = () => {
         </div>
       </div>
 
-      <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
-        © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights
-        reserved.
+      <footer
+        className='w-full text-center py-4 px-6 mt-6 
+  bg-white/60 backdrop-blur-md 
+  border-t border-orange-100 
+  shadow-[0_-2px_10px_rgba(0,0,0,0.05)] 
+  text-sm text-gray-600 font-medium tracking-wide'>
+        © {new Date().getFullYear()} Crafted with{' '}
+        <span className='text-red-500'>❤</span> by Kanta King Technologies Pvt
+        Ltd. All rights reserved.
       </footer>
     </div>
   );

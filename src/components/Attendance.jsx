@@ -6,6 +6,7 @@ const locationNames = {
   '28.4238432,77.0474929': "Vivek's Class",
   '19.076,72.8777': 'Mumbai Office',
   '28.423,77.031': 'Gurgaon Office',
+  '28.6109361,77.5959684': 'Test Location',
 };
 
 const shiftDataRaw = localStorage.getItem('dashboardUserShiftData');
@@ -150,13 +151,13 @@ const Attendance = () => {
       <div className='flex-grow flex flex-col md:flex-row items-center justify-center py-12 px-4 md:gap-20'>
         <div className='hidden md:block w-1/2'>
           <img
-            src='/assets/get-started.svg'
+            src='/assets/kuchnaya.svg'
             alt='Get Started'
             className='max-w-[80%]'
           />
         </div>
 
-        <div className='w-full md:w-1/3 bg-white p-10 shadow-md rounded-lg'>
+        <div className='w-full md:w-1/3 p-10 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/30 shadow-[0_20px_50px_rgba(255,101,0,0.2)] ring-1 ring-orange-100 hover:shadow-[0_25px_60px_rgba(255,101,0,0.3)] transition-all duration-300'>
           <img
             src='/assets/kanta-king-logo.svg'
             alt='Kanta King Logo'
@@ -168,12 +169,28 @@ const Attendance = () => {
           <p className='text-gray-600 text-center mb-6'>
             {isShiftEnd
               ? 'Please mark the end of your shift before logging out.'
-              : 'It’s time to mark your attendance. Click the button below to register your attendance for the day.'}
+              : 'It’s time to verify your identity. Click the button below to verify your identity.'}
           </p>
           <button
-            onClick={validateAttendance}
+            onClick={() =>
+              navigate('/face-scan', {
+                state: {
+                  userName,
+                  userMobile,
+                  userLat: assignedShift.lat,
+                  userLng: assignedShift.lng,
+                  locationName:
+                    locationNames[
+                      `${assignedShift.lat},${assignedShift.lng}`
+                    ] || 'Unknown Location',
+                  shiftEnd: isShiftEnd,
+                  deviationType: null,
+                  deviationReason: null,
+                },
+              })
+            }
             className='w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600'>
-            {isShiftEnd ? 'Mark Shift End' : 'Mark Your Attendance'}
+            {isShiftEnd ? 'Mark Shift End' : 'Verify Your Identity'}
           </button>
 
           {error.shift && (
@@ -185,67 +202,17 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* 🟠 Early/Late Logout Reason Modal */}
-      {showDeviationPopup && (
-        <div className='fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50'>
-          <div className='bg-white p-6 rounded-lg shadow-lg w-96 text-center'>
-            <img
-              src='/assets/oh.svg'
-              alt='Oh!'
-              className='mx-auto max-h-20 mb-3'
-            />
-            <h2 className='text-red-600 font-bold text-xl'>
-              {deviationType === 'early'
-                ? 'Early Logout'
-                : deviationType === 'late'
-                ? 'Late Logout'
-                : 'Late Login'}
-            </h2>
-            <p className='text-gray-600 mt-2'>
-              {deviationType === 'early'
-                ? 'You are trying to log out early. Please share the reason below:'
-                : deviationType === 'late'
-                ? 'You are logging out late. Please share the reason below:'
-                : 'You are late today. May we know the reason, please?'}
-            </p>
-            <textarea
-              className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none mt-3'
-              placeholder='Type your reason here...'
-              value={deviationReason}
-              onChange={(e) => setDeviationReason(e.target.value)}
-            />
-
-            <button
-              className='w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 mt-4'
-              onClick={() =>
-                navigate('/face-scan', {
-                  state: {
-                    userName,
-                    userMobile,
-                    userLat: assignedShift.lat,
-                    userLng: assignedShift.lng,
-                    locationName:
-                      locationNames[
-                        `${assignedShift.lat},${assignedShift.lng}`
-                      ] || 'Unknown Location',
-                    shiftEnd: isShiftEnd,
-                    deviationType,
-                    deviationReason,
-                  },
-                })
-              }>
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
-
-      <footer className='w-full text-center py-4 bg-white-100 text-gray-600 text-sm mt-6 rounded-lg shadow-md'>
-        © {new Date().getFullYear()} Kanta King Technologies Pvt Ltd. All rights
-        reserved.
+      <footer
+        className='w-full text-center py-4 px-6 mt-6 
+  bg-white/60 backdrop-blur-md 
+  border-t border-orange-100 
+  shadow-[0_-2px_10px_rgba(0,0,0,0.05)] 
+  text-sm text-gray-600 font-medium tracking-wide'>
+        © {new Date().getFullYear()} Crafted with{' '}
+        <span className='text-red-500'>❤</span> by Kanta King Technologies Pvt
+        Ltd. All rights reserved.
       </footer>
     </div>
   );
 };
-
 export default Attendance;
